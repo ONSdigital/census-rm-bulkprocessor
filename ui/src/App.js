@@ -7,7 +7,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      fileprogress: 0,
+      fileProgress: 0,
       fileUploadSuccess: false,
       uploadInProgress: false
     }
@@ -31,13 +31,13 @@ class App extends Component {
       onUploadProgress: (p) => {
         console.log(p);
         this.setState({
-          fileprogress: p.loaded / p.total
+          fileProgress: p.loaded / p.total
         })
       }
 
     }).then(data => {
       this.setState({
-        fileprogress: 1.0,
+        fileProgress: 1.0,
         fileUploadSuccess: true,
         uploadInProgress: false,
       })
@@ -92,10 +92,10 @@ class App extends Component {
             </Typography>
             <LinearProgress
               variant="determinate"
-              value={this.state.fileprogress * 100}
+              value={this.state.fileProgress * 100}
               style={{ marginTop: 20, marginBottom: 20, width: 400 }} />
             <Typography variant="h6" color="inherit">
-              {Math.round(this.state.fileprogress * 100)}%
+              {Math.round(this.state.fileProgress * 100)}%
           </Typography>
           </DialogContent>
         </Dialog>
