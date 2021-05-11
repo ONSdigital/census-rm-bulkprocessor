@@ -4,23 +4,27 @@ import axios from 'axios';
 import { Button, Box, Grid, Paper, AppBar, Toolbar, Typography, LinearProgress, Snackbar, SnackbarContent, Dialog, DialogContent } from '@material-ui/core';
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props)
+
+    // The state holds any values which should initiate a re-rendering of the UI, if they change
     this.state = {
-      fileProgress: 0,
-      fileUploadSuccess: false,
-      uploadInProgress: false
+      fileProgress: 0,  // Percentage of the file uploaded
+      fileUploadSuccess: false, // Flag to flash the snackbar message on the screen, when file uploads successfully
+      uploadInProgress: false // Flag to display the file upload progress modal dialog
     }
   }
 
   handleUpload = (e) => {
+    // Display the progress modal dialog
     this.setState({
       uploadInProgress: true,
     })
 
-    var formData = new FormData();
+    const formData = new FormData();
     formData.append("file", e.target.files[0]);
 
+    // Send the file data to the backend
     axios.request({
       method: "post",
       url: "/upload",
@@ -30,12 +34,15 @@ class App extends Component {
       },
       onUploadProgress: (p) => {
         console.log(p);
+
+        // Update file upload progress
         this.setState({
           fileProgress: p.loaded / p.total
         })
       }
 
     }).then(data => {
+      // Hide the progress dialog and flash the snackbar message
       this.setState({
         fileProgress: 1.0,
         fileUploadSuccess: true,
@@ -45,6 +52,7 @@ class App extends Component {
   }
 
   handleClose = (event, reason) => {
+    // Ignore clickaways so that the dialog is modal
     if (reason === 'clickaway') {
       return;
     }
@@ -52,7 +60,7 @@ class App extends Component {
     this.setState({
       fileUploadSuccess: false,
     })
-  };
+  }
 
   render() {
     return (
