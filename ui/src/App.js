@@ -29,13 +29,14 @@ class App extends Component {
       processors: []
     }
   }
+
   componentDidMount() {
       fetch("/processors")
         .then(res => res.json())
         .then(
           (result) => {
             this.setState({
-            processors: result['processors']
+              processors: result['processors']
             });
           },
           // Note: it's important to handle errors here
@@ -49,6 +50,7 @@ class App extends Component {
           }
         )
     }
+
   handleUpload = (e) => {
     // Display the progress modal dialog
     this.setState({
@@ -99,6 +101,10 @@ class App extends Component {
     alert()
   }
 
+  giveProcessorInfo(process) {
+    alert(process['Desc'])
+  }
+
   render() {
     const useStyles = makeStyles((theme) => ({
   root: {
@@ -144,7 +150,7 @@ class App extends Component {
           {/*  </label>*/}
           {/*</Paper>*/}
           {this.state.processors.map((process) =>(
-              <Grid item xs={12} sm={4}> <Button onClick={() => alert(process)}><Box bgcolor="text.secondary" p={2}>{process}</Box></Button></Grid>
+              <Grid item xs={12} sm={4}> <Button onClick={() => this.giveProcessorInfo(process)}><Box bgcolor="text.secondary" p={2}>{process['bulkType']}</Box></Button></Grid>
           ))}
         </Grid>
         <Dialog open={this.state.uploadInProgress}>

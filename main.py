@@ -14,14 +14,11 @@ ALLOWED_EXTENSIONS = ['csv']
 
 @app.route('/processors')
 def get_processor():
-    return {'processors': ['Refusals',
-                           'Uninvalidate',
-                           'New Address',
-                           'Address Modification',
-                           'Invalidate',
-                           'Non Compliance',
-                           'Deactivate UAC']}
-
+    return  {'processors': [
+                      {'bulkType': 'Refusals', 'Desc': 'Blah'},
+                      {'bulkType': 'EatMoreCarrots', 'Desc': 'They make you see in the dark' },
+                      {'bulkType': 'Deactivate UAC', 'Desc': 'Deactivate UAC' },
+                  ]}
 
 @app.route('/')
 def root():
