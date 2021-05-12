@@ -1,8 +1,8 @@
+import json
 import os
 
 from flask import Flask, flash, request, redirect, Response
 from werkzeug.utils import secure_filename
-
 
 app = Flask(__name__,
             static_url_path='',
@@ -10,6 +10,17 @@ app = Flask(__name__,
 app.secret_key = "super secret key"
 
 ALLOWED_EXTENSIONS = ['csv']
+
+
+@app.route('/processors')
+def get_processor():
+    return {'processors': ['Refusals',
+                           'Uninvalidate',
+                           'New Address',
+                           'Address Modification',
+                           'Invalidate',
+                           'Non Compliance',
+                           'Deactivate UAC']}
 
 
 @app.route('/')

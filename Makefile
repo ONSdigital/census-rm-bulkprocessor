@@ -5,7 +5,7 @@ run-dev-ui:
 	cd ui && npm install && npm start
 
 run-dev-api:
-	pipenv install && pipenv run python3 main.py
+	pipenv install && pipenv run python3 wsgi.py
 
 docker: build
 	docker build -t eu.gcr.io/census-rm-ci/rm/census-rm-bulkprocessor .
