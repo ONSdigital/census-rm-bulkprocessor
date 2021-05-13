@@ -14,7 +14,6 @@ import {
   SnackbarContent,
   Dialog,
   DialogContent,
-  makeStyles
 } from '@material-ui/core';
 
 class App extends Component {
@@ -100,22 +99,11 @@ class App extends Component {
   processorSelected = (e) => {
     alert()
   }
-
-  giveProcessorInfo(process) {
-    alert(process['Desc'])
+  giveProcessorInfo = (process) => {
+    alert(process['Desc']);
   }
 
   render() {
-    const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-}));
     return (
       <Box>
         <AppBar position="static">
@@ -125,11 +113,7 @@ class App extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        <Grid
-  container spacing={1}
-  direction="row"
-  alignItems="center"
->
+        <Grid container spacing={1} direction="row" alignItems="center">
           {/*<Paper elevation={3} style={{ margin: 10, padding: 10 }}>*/}
           {/*  <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>*/}
           {/*    Please upload a bulk file for processing*/}
@@ -150,7 +134,13 @@ class App extends Component {
           {/*  </label>*/}
           {/*</Paper>*/}
           {this.state.processors.map((process) =>(
-              <Grid item xs={12} sm={4}> <Button onClick={() => this.giveProcessorInfo(process)}><Box bgcolor="text.secondary" p={2}>{process['bulkType']}</Box></Button></Grid>
+              <Grid key={process['bulkType']} item xs={12} sm={4}>
+                <Button onClick={() => this.giveProcessorInfo(process)}>
+                  <Box borderRadius={16} bgcolor="primary.light" p={2}>
+                    {process['bulkType']}
+                  </Box>
+                </Button>
+              </Grid>
           ))}
         </Grid>
         <Dialog open={this.state.uploadInProgress}>
