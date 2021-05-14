@@ -5,7 +5,6 @@ import {
   Button,
   Box,
   Grid,
-  Paper,
   AppBar,
   Toolbar,
   Typography,
@@ -113,36 +112,36 @@ class App extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        <Grid container spacing={1} direction="row" alignItems="center">
-          {/*<Paper elevation={3} style={{ margin: 10, padding: 10 }}>*/}
-          {/*  <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>*/}
-          {/*    Please upload a bulk file for processing*/}
-          {/*  </Typography>*/}
-          {/*  <input*/}
-          {/*    accept="csv/*"*/}
-          {/*    style={{ display: 'none' }}*/}
-          {/*    id="contained-button-file"*/}
-          {/*    type="file"*/}
-          {/*    onChange={(e) => {*/}
-          {/*      this.handleUpload(e)*/}
-          {/*    }}*/}
-          {/*  />*/}
-          {/*  <label htmlFor="contained-button-file">*/}
-          {/*    <Button variant="contained" component="span">*/}
-          {/*      Upload*/}
-          {/*    </Button>*/}
-          {/*  </label>*/}
-          {/*</Paper>*/}
-          {this.state.processors.map((process) =>(
-              <Grid key={process['bulkType']} item xs={12} sm={4}>
-                <Button onClick={() => this.giveProcessorInfo(process)}>
-                  <Box borderRadius={16} bgcolor="primary.light" p={2}>
+        <div style={{padding: 10}} >
+          <Grid container spacing={1} direction="row" alignItems="center">
+            {/*<Paper elevation={3} style={{ margin: 10, padding: 10 }}>*/}
+            {/*  <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>*/}
+            {/*    Please upload a bulk file for processing*/}
+            {/*  </Typography>*/}
+            {/*  <input*/}
+            {/*    accept="csv/*"*/}
+            {/*    style={{ display: 'none' }}*/}
+            {/*    id="contained-button-file"*/}
+            {/*    type="file"*/}
+            {/*    onChange={(e) => {*/}
+            {/*      this.handleUpload(e)*/}
+            {/*    }}*/}
+            {/*  />*/}
+            {/*  <label htmlFor="contained-button-file">*/}
+            {/*    <Button variant="contained" component="span">*/}
+            {/*      Upload*/}
+            {/*    </Button>*/}
+            {/*  </label>*/}
+            {/*</Paper>*/}
+            {this.state.processors.map((process) =>(
+                <Grid key={process['bulkType']} item xs={12} sm={4}>
+                  <Button variant="contained" fullWidth={true} color="primary.light" onClick={() => this.giveProcessorInfo(process)}>
                     {process['bulkType']}
-                  </Box>
-                </Button>
-              </Grid>
-          ))}
-        </Grid>
+                  </Button>
+                </Grid>
+            ))}
+          </Grid>
+        </div>
         <Dialog open={this.state.uploadInProgress}>
           <DialogContent style={{ padding: 30 }}>
             <Typography variant="h6" color="inherit">
