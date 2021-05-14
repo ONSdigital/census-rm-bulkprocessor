@@ -3,6 +3,71 @@ import '@fontsource/roboto';
 import axios from 'axios';
 import { Button, Box, Grid, Paper, AppBar, Toolbar, Typography, LinearProgress, Snackbar, SnackbarContent, Dialog, DialogContent } from '@material-ui/core';
 
+class Upload extends Component {
+
+  render() {
+    return (
+      <Box>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" color="inherit">
+              RM Bulk Processing
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Grid>
+          <Paper elevation={3} style={{ margin: 10, padding: 10 }}>
+            <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
+              Please upload a bulk file for processing
+            </Typography>
+            <input
+              accept="csv/*"
+              style={{ display: 'none' }}
+              id="contained-button-file"
+              type="file"
+              onChange={(e) => {
+                this.props.handleUpload(e)
+              }}
+            />
+            <label htmlFor="contained-button-file">
+              <Button variant="contained" component="span">
+                Upload
+              </Button>
+            </label>
+          </Paper>
+        </Grid>
+        <Dialog open={this.props.uploadInProgress}>
+          <DialogContent style={{ padding: 30 }}>
+            <Typography variant="h6" color="inherit">
+              Uploading file...
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={this.props.fileProgress * 100}
+              style={{ marginTop: 20, marginBottom: 20, width: 400 }} />
+            <Typography variant="h6" color="inherit">
+              {Math.round(this.props.fileProgress * 100)}%
+          </Typography>
+          </DialogContent>
+        </Dialog>
+        <Snackbar
+          open={this.props.fileUploadSuccess}
+          autoHideDuration={6000}
+          onClose={this.props.handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}>
+          <SnackbarContent style={{ backgroundColor: '#4caf50' }}
+            message={'File upload successful!'}
+          />
+        </Snackbar>
+      </Box>
+    )
+  }
+}
+
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -14,8 +79,7 @@ class App extends Component {
       uploadInProgress: false // Flag to display the file upload progress modal dialog
     }
   }
-
-  handleUpload = (e) => {
+    handleUpload = (e) => {
     // Display the progress modal dialog
     this.setState({
       uploadInProgress: true,
@@ -63,65 +127,10 @@ class App extends Component {
   }
 
   render() {
-    return (
-      <Box>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6" color="inherit">
-              RM Bulk Processing
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Grid>
-          <Paper elevation={3} style={{ margin: 10, padding: 10 }}>
-            <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
-              Please upload a bulk file for processing
-            </Typography>
-            <input
-              accept="csv/*"
-              style={{ display: 'none' }}
-              id="contained-button-file"
-              type="file"
-              onChange={(e) => {
-                this.handleUpload(e)
-              }}
-            />
-            <label htmlFor="contained-button-file">
-              <Button variant="contained" component="span">
-                Upload
-              </Button>
-            </label>
-          </Paper>
-        </Grid>
-        <Dialog open={this.state.uploadInProgress}>
-          <DialogContent style={{ padding: 30 }}>
-            <Typography variant="h6" color="inherit">
-              Uploading file...
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={this.state.fileProgress * 100}
-              style={{ marginTop: 20, marginBottom: 20, width: 400 }} />
-            <Typography variant="h6" color="inherit">
-              {Math.round(this.state.fileProgress * 100)}%
-          </Typography>
-          </DialogContent>
-        </Dialog>
-        <Snackbar
-          open={this.state.fileUploadSuccess}
-          autoHideDuration={6000}
-          onClose={this.handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}>
-          <SnackbarContent style={{ backgroundColor: '#4caf50' }}
-            message={'File upload successful!'}
-          />
-        </Snackbar>
-      </Box>
-    )
-  }
+    return(
+    <Upload fileProgress={this.state.fileProgress} fileUploadSuccess={this.state.fileUploadSuccess} uploadInProgress={this.state.uploadInProgress}
+            handleClose={this.handleClose} handleUpload={this.handleUpload}/>
+    )}
 }
 
 export default App
