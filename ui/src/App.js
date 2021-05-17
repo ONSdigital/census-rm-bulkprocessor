@@ -29,7 +29,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-      fetch("/processors")
+      fetch("/bulkprocess")
         .then(res => res.json())
         .then(
           (result) => {
@@ -95,11 +95,13 @@ class App extends Component {
       fileUploadSuccess: false,
     })
   }
+
   processorSelected = (e) => {
     alert()
   }
+
   giveProcessorInfo = (process) => {
-    alert(process['Desc']);
+    alert(process['title']);
   }
 
   render() {
@@ -134,9 +136,9 @@ class App extends Component {
             {/*  </label>*/}
             {/*</Paper>*/}
             {this.state.processors.map((process) =>(
-                <Grid key={process['bulkType']} item xs={12} sm={4}>
+                <Grid key={process['bulkprocess']} item xs={12} sm={4}>
                   <Button variant="contained" fullWidth={true} color="primary.light" onClick={() => this.giveProcessorInfo(process)}>
-                    {process['bulkType']}
+                    {process['bulkprocess']}
                   </Button>
                 </Grid>
             ))}

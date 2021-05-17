@@ -12,16 +12,16 @@ app.secret_key = "super secret key"
 ALLOWED_EXTENSIONS = ['csv']
 
 
-@app.route('/processors')
+@app.route('/bulkprocess')
 def get_processor():
     return  {'processors': [
-                      {'bulkType': 'Refusals', 'Desc': 'Refusals Case'},
-                      {'bulkType': 'Uninvalidate', 'Desc': 'Uninvalidate Case' },
-                      {'bulkType': 'New Address', 'Desc': 'New Addresses'},
-                      {'bulkType': 'Address Modification', 'Desc': 'Address Modifications'},
-                      {'bulkType': 'Invalidate', 'Desc': 'Invalidate Case'},
-                      {'bulkType': 'Non Compliance', 'Desc': 'Non Compliance Cases'},
-                      {'bulkType': 'DeactivateUAC', 'Desc': 'Deactivate UACs' },
+                      {'bulkprocess': 'Refusals', 'title': 'Refusals Case'},
+                      {'bulkprocess': 'Uninvalidate', 'title': 'Uninvalidate Case' },
+                      {'bulkprocess': 'New Address', 'title': 'New Addresses'},
+                      {'bulkprocess': 'Address Modification', 'title': 'Address Modifications'},
+                      {'bulkprocess': 'Invalidate', 'title': 'Invalidate Case'},
+                      {'bulkprocess': 'Non Compliance', 'title': 'Non Compliance Cases'},
+                      {'bulkprocess': 'DeactivateUAC', 'title': 'Deactivate UACs' },
                   ]}
 
 
