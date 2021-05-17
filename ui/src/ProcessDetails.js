@@ -91,8 +91,8 @@ class ProcessDetails extends Component {
     clearInterval(this.interval)
 }
 
-handleOpenDetails = () => {
-  this.setState({showDetails : true})
+handleOpenDetails = (index) => {
+  this.setState({showDetails : true, selectedJob : index})
 }
 
 handleClosedDetails = () => {
@@ -101,13 +101,13 @@ handleClosedDetails = () => {
 
 
   render() {
-    const jobTableRows = this.state.jobs.map(job => (
+    const jobTableRows = this.state.jobs.map((job, index) => (
       <TableRow key={job.createdAt}>
         <TableCell component="th" scope="row">
           {job.fileName}
         </TableCell>
         <TableCell align="right">{job.createdAt}</TableCell>
-        <TableCell align="right"><Button onClick = {this.handleOpenDetails} variant="contained">{job.jobStatus}</Button></TableCell>
+        <TableCell align="right"><Button onClick = {() => this.handleOpenDetails(index)} variant="contained">{job.jobStatus}</Button></TableCell>
       </TableRow>
     ))
 
@@ -174,7 +174,7 @@ handleClosedDetails = () => {
             message={'File upload successful!'}
           />
         </Snackbar>
-        <JobDetails showDetails = {this.state.showDetails} handleClosedDetails = {this.handleClosedDetails}>
+        <JobDetails job = {this.state.jobs[this.state.selectedJob]} showDetails = {this.state.showDetails} handleClosedDetails = {this.handleClosedDetails}>
 
         </JobDetails>
       </Grid>
