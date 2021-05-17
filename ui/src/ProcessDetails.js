@@ -8,6 +8,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import JobDetails from './JobDetails';
 
 class ProcessDetails extends Component {
   constructor(props) {
@@ -21,6 +22,11 @@ class ProcessDetails extends Component {
     }
 
     this.getJobs()
+
+    this.interval = setInterval(
+        () => this.getJobs(),
+        1000
+    )
   }
 
   handleUpload = (e) => {
@@ -81,6 +87,19 @@ class ProcessDetails extends Component {
     // alert(this.state.jobs.length)
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval)
+}
+
+handleOpenDetails = () => {
+  this.setState({showDetails : true})
+}
+
+handleClosedDetails = () => {
+  this.setState({showDetails : false})
+}
+
+
   render() {
     const jobTableRows = this.state.jobs.map(job => (
       <TableRow key={job.createdAt}>
@@ -88,7 +107,7 @@ class ProcessDetails extends Component {
           {job.fileName}
         </TableCell>
         <TableCell align="right">{job.createdAt}</TableCell>
-        <TableCell align="right">{job.jobStatus}</TableCell>
+        <TableCell align="right"><Button onClick = {this.handleOpenDetails} variant="contained">{job.jobStatus}</Button></TableCell>
       </TableRow>
     ))
 
@@ -155,6 +174,9 @@ class ProcessDetails extends Component {
             message={'File upload successful!'}
           />
         </Snackbar>
+        <JobDetails showDetails = {this.state.showDetails} handleClosedDetails = {this.handleClosedDetails}>
+
+        </JobDetails>
       </Grid>
     )
   }

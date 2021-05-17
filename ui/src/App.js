@@ -3,15 +3,15 @@ import { Box, Typography, AppBar, Toolbar } from '@material-ui/core';
 import ProcessDetails from './ProcessDetails'
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-  }
+
 
 
   render() {
     const processDetails = (
       <ProcessDetails bulkProcess={'NEW_ADDRESS'}></ProcessDetails>
     )
+
+
 
     return (
       <Box>
