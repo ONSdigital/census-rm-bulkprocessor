@@ -116,25 +116,6 @@ class App extends Component {
         </AppBar>
         <div style={{padding: 10}} >
           <Grid container spacing={1} direction="row" alignItems="center">
-            {/*<Paper elevation={3} style={{ margin: 10, padding: 10 }}>*/}
-            {/*  <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>*/}
-            {/*    Please upload a bulk file for processing*/}
-            {/*  </Typography>*/}
-            {/*  <input*/}
-            {/*    accept="csv/*"*/}
-            {/*    style={{ display: 'none' }}*/}
-            {/*    id="contained-button-file"*/}
-            {/*    type="file"*/}
-            {/*    onChange={(e) => {*/}
-            {/*      this.handleUpload(e)*/}
-            {/*    }}*/}
-            {/*  />*/}
-            {/*  <label htmlFor="contained-button-file">*/}
-            {/*    <Button variant="contained" component="span">*/}
-            {/*      Upload*/}
-            {/*    </Button>*/}
-            {/*  </label>*/}
-            {/*</Paper>*/}
             {this.state.processors.map((process) =>(
                 <Grid key={process['bulkprocess']} item xs={12} sm={4}>
                   <Button variant="contained" fullWidth={true} color="primary.light" onClick={() => this.giveProcessorInfo(process)}>
