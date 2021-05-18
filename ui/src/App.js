@@ -1,7 +1,19 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
 import axios from 'axios';
-import { Button, Box, Grid, Paper, AppBar, Toolbar, Typography, LinearProgress, Snackbar, SnackbarContent, Dialog, DialogContent } from '@material-ui/core';
+import {
+  Button,
+  Box,
+  Grid,
+  AppBar,
+  Toolbar,
+  Typography,
+  LinearProgress,
+  Snackbar,
+  SnackbarContent,
+  Dialog,
+  DialogContent,
+} from '@material-ui/core';
 
 class App extends Component {
   constructor(props) {
@@ -11,9 +23,31 @@ class App extends Component {
     this.state = {
       fileProgress: 0,  // Percentage of the file uploaded
       fileUploadSuccess: false, // Flag to flash the snackbar message on the screen, when file uploads successfully
-      uploadInProgress: false // Flag to display the file upload progress modal dialog
+      uploadInProgress: false, // Flag to display the file upload progress modal dialog
+      processors: []
     }
   }
+
+  componentDidMount() {
+      fetch("/bulkprocess")
+        .then(res => res.json())
+        .then(
+          (result) => {
+            this.setState({
+              processors: result['processors']
+            });
+          },
+          // Note: it's important to handle errors here
+          // instead of a catch() block so that we don't swallow
+          // exceptions from actual bugs in components.
+          (error) => {
+            this.setState({
+              isLoaded: true,
+              error
+            });
+          }
+        )
+    }
 
   handleUpload = (e) => {
     // Display the progress modal dialog
@@ -62,6 +96,14 @@ class App extends Component {
     })
   }
 
+  processorSelected = (e) => {
+    alert()
+  }
+
+  giveProcessorInfo = (process) => {
+    alert(process['title']);
+  }
+
   render() {
     return (
       <Box>
@@ -72,27 +114,17 @@ class App extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        <Grid>
-          <Paper elevation={3} style={{ margin: 10, padding: 10 }}>
-            <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
-              Please upload a bulk file for processing
-            </Typography>
-            <input
-              accept="csv/*"
-              style={{ display: 'none' }}
-              id="contained-button-file"
-              type="file"
-              onChange={(e) => {
-                this.handleUpload(e)
-              }}
-            />
-            <label htmlFor="contained-button-file">
-              <Button variant="contained" component="span">
-                Upload
-              </Button>
-            </label>
-          </Paper>
-        </Grid>
+        <div style={{padding: 10}} >
+          <Grid container spacing={1} direction="row" alignItems="center">
+            {this.state.processors.map((process) =>(
+                <Grid key={process['bulkprocess']} item xs={12} sm={4}>
+                  <Button variant="contained" fullWidth={true} color="primary.light" onClick={() => this.giveProcessorInfo(process)}>
+                    {process['bulkprocess']}
+                  </Button>
+                </Grid>
+            ))}
+          </Grid>
+        </div>
         <Dialog open={this.state.uploadInProgress}>
           <DialogContent style={{ padding: 30 }}>
             <Typography variant="h6" color="inherit">

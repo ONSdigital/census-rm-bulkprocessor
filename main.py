@@ -1,8 +1,8 @@
+import json
 import os
 
 from flask import Flask, flash, request, redirect, Response
 from werkzeug.utils import secure_filename
-
 
 app = Flask(__name__,
             static_url_path='',
@@ -10,6 +10,19 @@ app = Flask(__name__,
 app.secret_key = "super secret key"
 
 ALLOWED_EXTENSIONS = ['csv']
+
+
+@app.route('/bulkprocess')
+def get_processor():
+    return  {'processors': [
+                      {'bulkprocess': 'Refusals', 'title': 'Refusals Case'},
+                      {'bulkprocess': 'Uninvalidate', 'title': 'Uninvalidate Case' },
+                      {'bulkprocess': 'New Address', 'title': 'New Addresses'},
+                      {'bulkprocess': 'Address Modification', 'title': 'Address Modifications'},
+                      {'bulkprocess': 'Invalidate', 'title': 'Invalidate Case'},
+                      {'bulkprocess': 'Non Compliance', 'title': 'Non Compliance Cases'},
+                      {'bulkprocess': 'DeactivateUAC', 'title': 'Deactivate UACs' },
+                  ]}
 
 
 @app.route('/')
