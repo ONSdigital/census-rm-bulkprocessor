@@ -14,11 +14,12 @@ public class JobDto {
   private OffsetDateTime lastUpdatedAt;
 
   private String fileName;
+  private int fileRowCount;
+  private int stagedRowCount;
+  private int processedRowCount;
+  private int rowErrorCount;
 
   private JobStatusDto jobStatus;
-
-  private int rowCount;
-  private int rowErrorCount;
 
   private String fatalErrorDescription;
 }

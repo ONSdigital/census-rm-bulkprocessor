@@ -20,6 +20,7 @@ import uk.gov.ons.census.bulkprocessor.model.entity.BulkProcess;
 import uk.gov.ons.census.bulkprocessor.model.entity.Job;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobRow;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobRowStatus;
+import uk.gov.ons.census.bulkprocessor.model.entity.JobStatus;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRepository;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRowRepository;
 
@@ -131,8 +132,20 @@ public class JobEndpoint {
     jobDto.setCreatedAt(job.getCreatedAt());
     jobDto.setLastUpdatedAt(job.getLastUpdatedAt());
     jobDto.setFileName(job.getFileName());
+    jobDto.setFileRowCount(job.getFileRowCount());
     jobDto.setJobStatus(JobStatusDto.valueOf(job.getJobStatus().name()));
-    jobDto.setRowCount(jobRowRepository.countByJob(job));
+
+    if (job.getJobStatus() == JobStatus.FILE_UPLOADED) {
+      jobDto.setStagedRowCount(0);
+    } else if (job.getJobStatus() == JobStatus.STAGING_IN_PROGRESS) {
+      jobDto.setStagedRowCount(
+          jobRowRepository.countByJobAndAndJobRowStatus(job, JobRowStatus.STAGED));
+    } else {
+      jobDto.setStagedRowCount(job.getFileRowCount() - 1);
+    }
+
+    jobDto.setProcessedRowCount(
+        jobRowRepository.countByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_OK));
     jobDto.setRowErrorCount(
         jobRowRepository.countByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_ERROR));
     jobDto.setFatalErrorDescription(job.getFatalErrorDescription());

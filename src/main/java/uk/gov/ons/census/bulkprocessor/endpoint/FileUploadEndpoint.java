@@ -1,7 +1,9 @@
 package uk.gov.ons.census.bulkprocessor.endpoint;
 
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,8 @@ public class FileUploadEndpoint {
           BulkProcess bulkProcess) {
     UUID fileId = UUID.randomUUID();
 
-    try (FileOutputStream fos = new FileOutputStream("/tmp/" + fileId)) {
+    try (FileOutputStream fos = new FileOutputStream("/tmp/" + fileId);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
       Job job = new Job();
       job.setId(UUID.randomUUID());
 
@@ -39,7 +42,15 @@ public class FileUploadEndpoint {
       job.setFileId(fileId);
       job.setJobStatus(JobStatus.FILE_UPLOADED);
 
-      fos.write(file.getBytes());
+      int rowCount = 0;
+      while (reader.ready()) {
+        String line = reader.readLine();
+        rowCount++;
+        fos.write(line.getBytes());
+        fos.write("\n".getBytes());
+      }
+
+      job.setFileRowCount(rowCount);
 
       jobRepository.saveAndFlush(job);
     } catch (IOException e) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
-import { Typography, Grid, Button, Dialog, DialogContent } from '@material-ui/core';
+import { Typography, Grid, Button, Dialog, DialogContent, LinearProgress } from '@material-ui/core';
 
 
 class JobDetails extends Component {
@@ -22,13 +22,31 @@ class JobDetails extends Component {
           </Grid>
           <Grid container item xs={12} spacing={3}>
             <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
+              File Row Count: {this.props.job.fileRowCount}
+            </Typography>
+          </Grid>
+          <Grid container item xs={12} spacing={3}>
+            <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
               Processing Progress: {this.props.job.jobStatus}
             </Typography>
           </Grid>
           <Grid container item xs={12} spacing={3}>
             <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
-              Rows staged: {this.props.job.rowCount}
+              Rows staged:
             </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={Math.round((this.props.job.stagedRowCount / (this.props.job.fileRowCount - 1)) * 100)}
+              style={{ marginTop: 20, marginBottom: 20, width: 300 }} />
+          </Grid>
+          <Grid container item xs={12} spacing={3}>
+            <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
+              Rows processed:
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={Math.round(((this.props.job.processedRowCount + this.props.job.rowErrorCount) / (this.props.job.fileRowCount - 1)) * 100)}
+              style={{ marginTop: 20, marginBottom: 20, width: 300 }} />
           </Grid>
           <Grid container item xs={12} spacing={3}>
             <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>

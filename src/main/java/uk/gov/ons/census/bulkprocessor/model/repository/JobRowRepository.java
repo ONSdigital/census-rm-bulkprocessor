@@ -8,9 +8,11 @@ import uk.gov.ons.census.bulkprocessor.model.entity.JobRow;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobRowStatus;
 
 public interface JobRowRepository extends JpaRepository<JobRow, UUID> {
-  int countByJob(Job job);
-
   int countByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 
+  boolean existsByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
+
   List<JobRow> findByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
+
+  List<JobRow> findTop10ByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 }

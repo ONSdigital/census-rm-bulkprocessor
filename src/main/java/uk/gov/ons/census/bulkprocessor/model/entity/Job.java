@@ -35,6 +35,12 @@ public class Job {
 
   @Column private UUID fileId;
 
+  @Column private int fileRowCount;
+
+  @Column private int stagingRowNumber;
+
+  @Column private int processingRowNumber;
+
   @Enumerated(EnumType.STRING)
   @Column
   private JobStatus jobStatus;
