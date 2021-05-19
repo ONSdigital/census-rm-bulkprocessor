@@ -29,7 +29,7 @@ public class StagedJobProcessor {
   @Scheduled(fixedDelayString = "1000")
   @Transactional
   public void processStagedJobs() {
-    List<Job> jobs = jobRepository.findByJobStatus(JobStatus.FILE_STAGED);
+    List<Job> jobs = jobRepository.findByJobStatus(JobStatus.PROCESSING_IN_PROGRESS);
 
     for (Job job : jobs) {
       JobStatus jobStatus = JobStatus.PROCESSED_OK;

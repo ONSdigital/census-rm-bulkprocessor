@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
 import axios from 'axios';
-import { Grid, Paper, Typography, Button, LinearProgress, Snackbar, SnackbarContent, Dialog, DialogContent } from '@material-ui/core';
+import { Grid, Paper, Typography, Button, LinearProgress, Snackbar, SnackbarContent, Dialog, DialogContent, CircularProgress } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -105,7 +105,9 @@ class ProcessDetails extends Component {
           {job.fileName}
         </TableCell>
         <TableCell>{job.createdAt}</TableCell>
-        <TableCell align="right"><Button onClick={() => this.handleOpenDetails(index)} variant="contained">{job.jobStatus}</Button></TableCell>
+        <TableCell align="right">
+        <Button onClick={() => this.handleOpenDetails(index)} variant="contained">{job.jobStatus} {!job.jobStatus.startsWith('PROCESSED') && <CircularProgress size={15} />}</Button>
+        </TableCell>
       </TableRow>
     ))
 

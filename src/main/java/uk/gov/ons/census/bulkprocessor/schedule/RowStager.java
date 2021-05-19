@@ -27,7 +27,7 @@ public class RowStager {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.STAGING_IN_PROGRESS);
 
     for (Job job : jobs) {
-      JobStatus jobStatus = JobStatus.FILE_STAGED;
+      JobStatus jobStatus = JobStatus.PROCESSING_IN_PROGRESS;
 
       try (Reader reader = Files.newBufferedReader(Path.of("/tmp/" + job.getFileId()));
           CSVReader csvReader = new CSVReader(reader)) {
