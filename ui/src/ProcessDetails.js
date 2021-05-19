@@ -104,7 +104,7 @@ class ProcessDetails extends Component {
         <TableCell component="th" scope="row">
           {job.fileName}
         </TableCell>
-        <TableCell align="right">{job.createdAt}</TableCell>
+        <TableCell>{job.createdAt}</TableCell>
         <TableCell align="right"><Button onClick={() => this.handleOpenDetails(index)} variant="contained">{job.jobStatus}</Button></TableCell>
       </TableRow>
     ))
@@ -134,8 +134,8 @@ class ProcessDetails extends Component {
               <TableHead>
                 <TableRow>
                   <TableCell>File Name</TableCell>
-                  <TableCell align="right">Date Uploaded</TableCell>
-                  <TableCell align="right">Progress</TableCell>
+                  <TableCell>Date Uploaded</TableCell>
+                  <TableCell align="right">Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -170,8 +170,7 @@ class ProcessDetails extends Component {
             message={'File upload successful!'}
           />
         </Snackbar>
-        <JobDetails job={this.state.jobs[this.state.selectedJob]} showDetails={this.state.showDetails} handleClosedDetails={this.handleClosedDetails}>
-
+        <JobDetails jobTitle={this.props.bulkProcess['title']} job={this.state.jobs[this.state.selectedJob]} showDetails={this.state.showDetails} handleClosedDetails={this.handleClosedDetails}>
         </JobDetails>
       </Grid>
     )

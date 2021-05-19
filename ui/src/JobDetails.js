@@ -12,7 +12,7 @@ class JobDetails extends Component {
         <Grid container spacing={1}>
           <Grid container item xs={12} spacing={3}>
             <Typography variant="h5" color="inherit" style={{ margin: 10, padding: 10 }}>
-              New Address
+              {this.props.jobTitle}
       </Typography>
           </Grid>
           <Grid container item xs={12} spacing={3}>
@@ -22,12 +22,12 @@ class JobDetails extends Component {
           </Grid>
           <Grid container item xs={12} spacing={3}>
             <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
-              File Row Count: {this.props.job.fileRowCount}
+              File line count: {this.props.job.fileRowCount}
             </Typography>
           </Grid>
           <Grid container item xs={12} spacing={3}>
             <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
-              Processing Progress: {this.props.job.jobStatus}
+              Job status: {this.props.job.jobStatus}
             </Typography>
           </Grid>
           <Grid container item xs={12} spacing={3}>
