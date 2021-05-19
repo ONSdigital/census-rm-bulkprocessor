@@ -1,16 +1,15 @@
-FROM python:3.7-slim
+FROM openjdk:11-slim
+CMD ["/usr/local/openjdk-11/bin/java", "-jar", "/opt/census-rm-bulkprocessor.jar"]
 
-EXPOSE 5000
+RUN groupadd --gid 999 bulkprocessor && \
+    useradd --create-home --system --uid 999 --gid bulkprocessor bulkprocessor
 
-RUN pip install pipenv
+RUN apt-get update && \
+apt-get -yq install curl && \
+apt-get -yq clean && \
+rm -rf /var/lib/apt/lists/*
 
-RUN groupadd --gid 1000 bulkprocessor && \
-    useradd --create-home --system --uid 1000 --gid bulkprocessor bulkprocessor
-WORKDIR /home/bulkprocessor
-CMD ["./gunicorn_starter.sh"]
-
-COPY Pipfile* /home/bulkprocessor/
-RUN pipenv install --deploy --system
 USER bulkprocessor
 
-COPY --chown=bulkprocessor . /home/bulkprocessor
+ARG JAR_FILE=census-rm-bulkprocessor*.jar
+COPY target/$JAR_FILE /opt/census-rm-bulkprocessor.jar
