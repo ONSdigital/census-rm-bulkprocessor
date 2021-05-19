@@ -106,7 +106,11 @@ class ProcessDetails extends Component {
         </TableCell>
         <TableCell>{job.createdAt}</TableCell>
         <TableCell align="right">
-        <Button onClick={() => this.handleOpenDetails(index)} variant="contained">{job.jobStatus} {!job.jobStatus.startsWith('PROCESSED') && <CircularProgress size={15} />}</Button>
+          <Button
+            onClick={() => this.handleOpenDetails(index)}
+            variant="contained">
+            {job.jobStatus} {!job.jobStatus.startsWith('PROCESSED') && <CircularProgress size={15} style={{ marginLeft: 10 }} />}
+          </Button>
         </TableCell>
       </TableRow>
     ))
