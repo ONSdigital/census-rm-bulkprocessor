@@ -13,7 +13,7 @@ class JobDetails extends Component {
           <Grid container item xs={12} spacing={3}>
             <Typography variant="h5" color="inherit" style={{ margin: 10, padding: 10 }}>
               {this.props.jobTitle}
-      </Typography>
+            </Typography>
           </Grid>
           <Grid container item xs={12} spacing={3}>
             <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
@@ -39,20 +39,31 @@ class JobDetails extends Component {
               value={Math.round((this.props.job.stagedRowCount / (this.props.job.fileRowCount - 1)) * 100)}
               style={{ marginTop: 20, marginBottom: 20, width: 300 }} />
           </Grid>
-          <Grid container item xs={12} spacing={3}>
-            <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
-              Rows processed:
+          {!this.props.job.fatalErrorDescription &&
+            <Grid container item xs={12}>
+              <Grid container item xs={12} spacing={3}>
+                <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
+                  Rows processed:
             </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={Math.round(((this.props.job.processedRowCount + this.props.job.rowErrorCount) / (this.props.job.fileRowCount - 1)) * 100)}
-              style={{ marginTop: 20, marginBottom: 20, width: 300 }} />
-          </Grid>
-          <Grid container item xs={12} spacing={3}>
-            <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
-              Errors: {this.props.job.rowErrorCount}
-            </Typography>
-          </Grid>
+                <LinearProgress
+                  variant="determinate"
+                  value={Math.round(((this.props.job.processedRowCount + this.props.job.rowErrorCount) / (this.props.job.fileRowCount - 1)) * 100)}
+                  style={{ marginTop: 20, marginBottom: 20, width: 300 }} />
+              </Grid>
+              <Grid container item xs={12} spacing={3}>
+                <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
+                  Errors: {this.props.job.rowErrorCount}
+                </Typography>
+              </Grid>
+            </Grid>
+          }
+          {this.props.job.fatalErrorDescription &&
+            <Grid container item xs={12} spacing={3}>
+              <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
+                Fatal error: {this.props.job.fatalErrorDescription}
+              </Typography>
+            </Grid>
+          }
           <Grid container item xs={12} spacing={3}>
             <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
               Uploaded Date/Time: {this.props.job.createdAt}
