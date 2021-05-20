@@ -32,6 +32,11 @@ spring:
     port: 6672
     virtualhost: /
 
+  task:
+    scheduling:
+      pool:
+        size: 10
+
 management:
   endpoints:
     enabled-by-default: false
