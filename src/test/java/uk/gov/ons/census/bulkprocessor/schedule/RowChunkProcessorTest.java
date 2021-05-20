@@ -50,7 +50,9 @@ public class RowChunkProcessorTest {
     when(jobRowRepository.findTop10ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED))
         .thenReturn(List.of(jobRow));
 
-    underTest.processChunk(job);
+    boolean result = underTest.processChunk(job);
+
+    assertThat(result).isFalse();
 
     ArgumentCaptor<CreateCaseSample> sampleArgumentCaptor =
         ArgumentCaptor.forClass(CreateCaseSample.class);
@@ -84,7 +86,9 @@ public class RowChunkProcessorTest {
     when(jobRowRepository.findTop10ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED))
         .thenReturn(List.of(jobRow));
 
-    underTest.processChunk(job);
+    boolean result = underTest.processChunk(job);
+
+    assertThat(result).isTrue();
 
     verifyNoInteractions(rabbitTemplate);
 
