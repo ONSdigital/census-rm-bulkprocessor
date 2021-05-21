@@ -84,6 +84,11 @@
       <artifactId>micrometer-registry-stackdriver</artifactId>
       <version>1.5.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.auth</groupId>
+      <artifactId>google-auth-library-oauth2-http</artifactId>
+      <version>0.25.5</version>
+    </dependency>
 
     <!--    Test Dependencies below this point -->
     <dependency>
