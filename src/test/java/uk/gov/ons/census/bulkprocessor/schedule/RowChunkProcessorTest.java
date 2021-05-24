@@ -48,7 +48,7 @@ public class RowChunkProcessorTest {
     jobRow.setRowData(rowData);
 
     when(jobRowRepository.findTop500ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED))
-        .thenReturn(List.of(jobRow).stream());
+        .thenReturn(List.of(jobRow));
 
     boolean result = underTest.processChunk(job);
 
@@ -60,13 +60,12 @@ public class RowChunkProcessorTest {
         .convertAndSend(eq(""), eq("case.sample.inbound"), sampleArgumentCaptor.capture());
     assertThat(sampleArgumentCaptor.getValue().getAddressLine1()).isEqualTo("test address line 1");
 
-    ArgumentCaptor<JobRow> jobRowArgumentCaptor = ArgumentCaptor.forClass(JobRow.class);
-    verify(jobRowRepository).save(jobRowArgumentCaptor.capture());
-    assertThat(jobRowArgumentCaptor.getValue()).isEqualTo(jobRow);
-    assertThat(jobRowArgumentCaptor.getValue().getJobRowStatus())
+    ArgumentCaptor<List<JobRow>> jobRowListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+    verify(jobRowRepository).saveAll(jobRowListArgumentCaptor.capture());
+    assertThat(jobRowListArgumentCaptor.getValue().size()).isEqualTo(1);
+    assertThat(jobRowListArgumentCaptor.getValue().get(0)).isEqualTo(jobRow);
+    assertThat(jobRowListArgumentCaptor.getValue().get(0).getJobRowStatus())
         .isEqualTo(JobRowStatus.PROCESSED_OK);
-
-    verify(jobRowRepository).flush();
   }
 
   @Test
@@ -86,7 +85,7 @@ public class RowChunkProcessorTest {
     jobRow.setRowData(rowData);
 
     when(jobRowRepository.findTop500ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED))
-        .thenReturn(List.of(jobRow).stream());
+        .thenReturn(List.of(jobRow));
 
     boolean result = underTest.processChunk(job);
 
@@ -94,15 +93,14 @@ public class RowChunkProcessorTest {
 
     verifyNoInteractions(rabbitTemplate);
 
-    ArgumentCaptor<JobRow> jobRowArgumentCaptor = ArgumentCaptor.forClass(JobRow.class);
-    verify(jobRowRepository).save(jobRowArgumentCaptor.capture());
-    assertThat(jobRowArgumentCaptor.getValue()).isEqualTo(jobRow);
-    assertThat(jobRowArgumentCaptor.getValue().getJobRowStatus())
+    ArgumentCaptor<List<JobRow>> jobRowListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+    verify(jobRowRepository).saveAll(jobRowListArgumentCaptor.capture());
+    assertThat(jobRowListArgumentCaptor.getValue().size()).isEqualTo(1);
+    assertThat(jobRowListArgumentCaptor.getValue().get(0)).isEqualTo(jobRow);
+    assertThat(jobRowListArgumentCaptor.getValue().get(0).getJobRowStatus())
         .isEqualTo(JobRowStatus.PROCESSED_ERROR);
-    assertThat(jobRowArgumentCaptor.getValue().getValidationErrorDescriptions())
+    assertThat(jobRowListArgumentCaptor.getValue().get(0).getValidationErrorDescriptions())
         .isEqualTo(
             "Column 'POSTCODE' value '%%$*&$£&^$£*' validation error: Value is not alphanumeric");
-
-    verify(jobRowRepository).flush();
   }
 }
