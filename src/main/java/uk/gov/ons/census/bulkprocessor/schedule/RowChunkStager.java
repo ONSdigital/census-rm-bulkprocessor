@@ -2,9 +2,6 @@ package uk.gov.ons.census.bulkprocessor.schedule;
 
 import com.opencsv.CSVReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,15 +28,9 @@ public class RowChunkStager {
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void stageChunk(Job job, String[] headerRow) {
-    try (Reader reader = Files.newBufferedReader(Path.of("/tmp/" + job.getFileId()));
-        CSVReader csvReader = new CSVReader(reader)) {
+  public void stageChunk(Job job, String[] headerRow, CSVReader csvReader) {
+    try {
       List<JobRow> jobRows = new LinkedList<>();
-
-      // Skip lines which we don't need, until we reach progress point... including header row
-      for (int i = 0; i < job.getStagingRowNumber() + 1; i++) {
-        csvReader.readNext();
-      }
 
       for (int i = 0; i < CHUNK_SIZE; i++) {
         String[] line = csvReader.readNext();

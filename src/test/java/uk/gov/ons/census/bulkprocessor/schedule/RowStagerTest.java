@@ -1,10 +1,13 @@
 package uk.gov.ons.census.bulkprocessor.schedule;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.opencsv.CSVReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -38,14 +41,15 @@ public class RowStagerTest {
 
     Job job = mock(Job.class);
     when(job.getFileId()).thenReturn(randomFileName);
-    when(job.getStagingRowNumber()).thenReturn(180).thenReturn(190).thenReturn(200);
-    when(job.getFileRowCount()).thenReturn(200);
+    when(job.getStagingRowNumber()).thenReturn(0).thenReturn(0).thenReturn(1).thenReturn(2);
+    when(job.getFileRowCount()).thenReturn(3);
 
     when(jobRepository.findByJobStatus(JobStatus.STAGING_IN_PROGRESS)).thenReturn(List.of(job));
 
     underTest.processRows();
 
-    verify(rowChunkStager, times(2)).stageChunk(job, new String[] {"case_id", "refusal_type"});
+    verify(rowChunkStager, times(2))
+        .stageChunk(eq(job), eq(new String[] {"case_id", "refusal_type"}), any(CSVReader.class));
 
     verify(job).setJobStatus(JobStatus.PROCESSING_IN_PROGRESS);
     verify(jobRepository).saveAndFlush(job);

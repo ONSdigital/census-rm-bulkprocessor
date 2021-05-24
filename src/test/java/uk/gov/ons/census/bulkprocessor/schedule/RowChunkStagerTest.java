@@ -1,8 +1,11 @@
 package uk.gov.ons.census.bulkprocessor.schedule;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import com.opencsv.CSVReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -28,7 +31,7 @@ public class RowChunkStagerTest {
   @InjectMocks private RowChunkStager underTest;
 
   @Test
-  public void testStageChunk() {
+  public void testStageChunk() throws IOException {
     UUID randomFileName = UUID.randomUUID();
     try (FileOutputStream fos = new FileOutputStream("/tmp/" + randomFileName)) {
       fos.write("case_id,refusal_type\n".getBytes());
@@ -41,7 +44,12 @@ public class RowChunkStagerTest {
     job.setBulkProcess(BulkProcess.REFUSAL);
     job.setFileId(randomFileName);
 
-    underTest.stageChunk(job, new String[] {"case_id", "refusal_type"});
+    CSVReader csvReader = mock(CSVReader.class);
+    when(csvReader.readNext())
+        .thenReturn(new String[] {"e932fea8-aa40-4052-b796-12cb2f2517d2", "EXTRAORDINARY_REFUSAL"})
+        .thenReturn(null);
+
+    underTest.stageChunk(job, new String[] {"case_id", "refusal_type"}, csvReader);
 
     ArgumentCaptor<List<JobRow>> jobRowArgumentCaptor = ArgumentCaptor.forClass(List.class);
     verify(jobRowRepository).saveAll(jobRowArgumentCaptor.capture());
