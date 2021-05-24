@@ -17,10 +17,12 @@ import uk.gov.ons.census.bulkprocessor.model.entity.BulkProcess;
 import uk.gov.ons.census.bulkprocessor.model.entity.Job;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobRow;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobRowStatus;
+import uk.gov.ons.census.bulkprocessor.model.repository.JobRepository;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRowRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RowChunkStagerTest {
+  @Mock private JobRepository jobRepository;
   @Mock private JobRowRepository jobRowRepository;
 
   @InjectMocks private RowChunkStager underTest;
@@ -52,5 +54,10 @@ public class RowChunkStagerTest {
         .isEqualTo("e932fea8-aa40-4052-b796-12cb2f2517d2");
     assertThat(jobRowArgumentCaptor.getValue().get(0).getRowData().get("refusal_type"))
         .isEqualTo("EXTRAORDINARY_REFUSAL");
+
+    ArgumentCaptor<Job> jobArgumentCaptor = ArgumentCaptor.forClass(Job.class);
+    verify(jobRepository).saveAndFlush(jobArgumentCaptor.capture());
+    assertThat(jobArgumentCaptor.getValue()).isEqualTo(job);
+    assertThat(jobArgumentCaptor.getValue().getStagingRowNumber()).isEqualTo(1);
   }
 }
