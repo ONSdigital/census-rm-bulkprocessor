@@ -8,6 +8,4 @@ spring:
 
 caseapi:
   connection:
-    scheme: http
     host: caseapi
-    port: 8161
