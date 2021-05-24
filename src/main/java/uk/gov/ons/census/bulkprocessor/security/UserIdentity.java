@@ -2,18 +2,41 @@ package uk.gov.ons.census.bulkprocessor.security;
 
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.google.auth.oauth2.TokenVerifier;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import uk.gov.ons.census.bulkprocessor.model.entity.BulkProcess;
+import uk.gov.ons.census.bulkprocessor.model.entity.User;
+import uk.gov.ons.census.bulkprocessor.model.repository.UserRepository;
 
 @Component
 public class UserIdentity {
   private static final String IAP_ISSUER_URL = "https://cloud.google.com/iap";
 
+  private final UserRepository userRepository;
+  private final String iapAudience;
+
   private TokenVerifier tokenVerifier = null;
 
-  @Value("${iapaudience}")
-  private String iapAudience;
+  public UserIdentity(UserRepository userRepository, @Value("${iapaudience}") String iapAudience) {
+    this.userRepository = userRepository;
+    this.iapAudience = iapAudience;
+  }
+
+  public Collection<BulkProcess> getBulkProcesses(String jwtToken) {
+    String userEmail = getUserEmail(jwtToken);
+    Optional<User> userOpt = userRepository.findByEmail(userEmail);
+
+    if (userOpt.isPresent()) {
+      return userOpt.get().getBulkProcesses();
+    } else {
+      // Hack for local testing... return all bulk processors if user is not in DB
+      return List.of(BulkProcess.values());
+    }
+  }
 
   public String getUserEmail(String jwtToken) {
     if (StringUtils.isEmpty(jwtToken)) {

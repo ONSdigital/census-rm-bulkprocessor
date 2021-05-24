@@ -8,12 +8,15 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.ons.census.bulkprocessor.model.dto.JobDto;
 import uk.gov.ons.census.bulkprocessor.model.dto.JobStatusDto;
 import uk.gov.ons.census.bulkprocessor.model.entity.BulkProcess;
@@ -23,6 +26,7 @@ import uk.gov.ons.census.bulkprocessor.model.entity.JobRowStatus;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobStatus;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRepository;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRowRepository;
+import uk.gov.ons.census.bulkprocessor.security.UserIdentity;
 
 @RestController
 @RequestMapping(value = "/job")
@@ -30,16 +34,24 @@ public class JobEndpoint {
 
   private final JobRepository jobRepository;
   private final JobRowRepository jobRowRepository;
+  private final UserIdentity userIdentity;
 
-  public JobEndpoint(JobRepository jobRepository, JobRowRepository jobRowRepository) {
+  public JobEndpoint(
+      JobRepository jobRepository, JobRowRepository jobRowRepository, UserIdentity userIdentity) {
     this.jobRepository = jobRepository;
     this.jobRowRepository = jobRowRepository;
+    this.userIdentity = userIdentity;
   }
 
   @GetMapping
   public List<JobDto> findAllJobs(
-      @RequestParam(value = "bulkProcess", required = false) Optional<BulkProcess> bulkProcess) {
+      @RequestParam(value = "bulkProcess", required = false) Optional<BulkProcess> bulkProcess,
+      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
     if (bulkProcess.isPresent()) {
+      if (!userIdentity.getBulkProcesses(jwtToken).contains(bulkProcess.get())) {
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
+      }
+
       return jobRepository.findByBulkProcess(bulkProcess.get()).stream()
           .map((job) -> mapJob(job))
           .collect(Collectors.toList());
