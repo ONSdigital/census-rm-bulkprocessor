@@ -5,3 +5,9 @@ spring:
   rabbitmq:
     host: rabbitmq
     port: 5672
+
+caseapi:
+  connection:
+    scheme: http
+    host: caseapi
+    port: 8161
