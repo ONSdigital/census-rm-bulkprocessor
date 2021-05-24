@@ -33,6 +33,10 @@ class ProcessDetails extends Component {
   }
 
   handleUpload = (e) => {
+    if (e.target.files.length == 0) {
+      return
+    }
+
     // Display the progress modal dialog
     this.setState({
       uploadInProgress: true,
