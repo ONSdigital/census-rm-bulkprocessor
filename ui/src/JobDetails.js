@@ -73,14 +73,19 @@ class JobDetails extends Component {
       )
     }
 
+    var fileDownloadHost = ""
+    if (process.env.NODE_ENV != 'production') {
+      fileDownloadHost = "http://localhost:8080"
+    }
+
     var buttonFragment
     if (this.props.job && this.props.job.jobStatus === 'PROCESSED_WITH_ERRORS') {
       buttonFragment = (
         <Grid container spacing={1}>
-          <Button target="_blank" href={"http://localhost:8080/job/" + this.props.job.id + "/error"} variant="contained" style={{ margin: 10 }}>
+          <Button target="_blank" href={fileDownloadHost + "/job/" + this.props.job.id + "/error"} variant="contained" style={{ margin: 10 }}>
             Download Failed Rows CSV
             </Button>
-          <Button target="_blank" href={"http://localhost:8080/job/" + this.props.job.id + "/errorDetail"} variant="contained" style={{ margin: 10 }}>
+          <Button target="_blank" href={fileDownloadHost + "/job/" + this.props.job.id + "/errorDetail"} variant="contained" style={{ margin: 10 }}>
             Download Error Details CSV
             </Button>
         </Grid>
