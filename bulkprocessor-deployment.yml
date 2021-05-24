@@ -62,8 +62,11 @@ spec:
             - name: http-server
               containerPort: 8080
           env:
-            - name: IAPAUDIENCE
-              value: "/projects/460739053244/global/backendServices/590219940922534314"
+            - name: IAP_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: iap-audiences
+                  key: bulkprocessor
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
