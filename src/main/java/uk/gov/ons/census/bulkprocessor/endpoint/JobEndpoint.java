@@ -151,10 +151,13 @@ public class JobEndpoint {
       jobDto.setStagedRowCount(0);
     } else {
       jobDto.setStagedRowCount(job.getStagingRowNumber());
-      jobDto.setProcessedRowCount(
-          jobRowRepository.countByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_OK));
-      jobDto.setRowErrorCount(
-          jobRowRepository.countByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_ERROR));
+
+      if (job.getJobStatus() != JobStatus.STAGING_IN_PROGRESS) {
+        jobDto.setProcessedRowCount(
+            jobRowRepository.countByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_OK));
+        jobDto.setRowErrorCount(
+            jobRowRepository.countByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_ERROR));
+      }
     }
 
     jobDto.setFatalErrorDescription(job.getFatalErrorDescription());
