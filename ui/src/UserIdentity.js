@@ -19,7 +19,7 @@ class UserIdentity extends Component {
   render() {
     return (
       <div>
-        <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
+        <Typography variant="inherit" color="inherit" style={{ margin: 10, padding: 10 }}>
           {this.state.user}
         </Typography>
       </div>
