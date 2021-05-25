@@ -46,6 +46,9 @@ class ProcessDetails extends Component {
     formData.append("file", e.target.files[0]);
     formData.append("bulkProcess", this.props.bulkProcess['bulkProcess'])
 
+    // Reset the file
+    e.target.value = null;
+
     // Send the file data to the backend
     axios.request({
       method: "post",
@@ -63,7 +66,7 @@ class ProcessDetails extends Component {
         })
       }
 
-    }).then(data => {
+    }).then(data => {      
       // Hide the progress dialog and flash the snackbar message
       this.setState({
         fileProgress: 1.0,
