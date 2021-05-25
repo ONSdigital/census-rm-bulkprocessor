@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.ons.census.bulkprocessor.model.entity.Job;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobStatus;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRepository;
@@ -23,6 +24,7 @@ public class RowStager {
   }
 
   @Scheduled(fixedDelayString = "1000")
+  @Transactional
   public void processRows() {
     List<Job> jobs = jobRepository.findByJobStatus(JobStatus.STAGING_IN_PROGRESS);
 
@@ -33,9 +35,14 @@ public class RowStager {
           CSVReader csvReader = new CSVReader(reader)) {
         String[] headerRow = csvReader.readNext();
 
+        // Skip lines which we don't need, until we reach progress point
+        for (int i = 0; i < job.getStagingRowNumber(); i++) {
+          csvReader.readNext();
+        }
+
         // Stage all the rows
         while (job.getStagingRowNumber() < job.getFileRowCount() - 1) {
-          rowChunkStager.stageChunk(job, headerRow);
+          rowChunkStager.stageChunk(job, headerRow, csvReader);
         }
 
         job.setJobStatus(jobStatus);

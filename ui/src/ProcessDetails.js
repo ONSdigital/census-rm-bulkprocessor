@@ -18,9 +18,12 @@ class ProcessDetails extends Component {
       jobs: [],
       fileProgress: 0,  // Percentage of the file uploaded
       fileUploadSuccess: false, // Flag to flash the snackbar message on the screen, when file uploads successfully
-      uploadInProgress: false // Flag to display the file upload progress modal dialog
+      uploadInProgress: false, // Flag to display the file upload progress modal dialog
+      showDetails: false // Flag to display the job details dialog
     }
+  }
 
+  componentDidMount() {
     this.getJobs()
 
     this.interval = setInterval(
@@ -30,6 +33,10 @@ class ProcessDetails extends Component {
   }
 
   handleUpload = (e) => {
+    if (e.target.files.length === 0) {
+      return
+    }
+
     // Display the progress modal dialog
     this.setState({
       uploadInProgress: true,
@@ -118,7 +125,7 @@ class ProcessDetails extends Component {
     return (
       <Grid>
         <Paper elevation={3} style={{ margin: 10, padding: 10 }}>
-          <Typography variant="h8" color="inherit" style={{ margin: 10, padding: 10 }}>
+          <Typography variant="inherit" color="inherit" style={{ margin: 10, padding: 10 }}>
             Please upload a {this.props.bulkProcess['title']} bulk file for processing
             </Typography>
           <input

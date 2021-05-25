@@ -5,9 +5,9 @@ import java.util.UUID;
 import uk.gov.ons.census.bulkprocessor.model.dto.CreateCaseSample;
 
 public class NewAddressTransformer implements Transformer {
-  private static final UUID CENSUS_ACTION_PLAN_ID =
+  protected static final UUID CENSUS_ACTION_PLAN_ID =
       UUID.fromString("c4415287-0e37-447b-9c3d-1a011c9fa3db");
-  private static final UUID CENSUS_COLLEX_ID =
+  protected static final UUID CENSUS_COLLEX_ID =
       UUID.fromString("34d7f3bb-91c9-45d0-bb2d-90afce4fc790");
 
   @Override

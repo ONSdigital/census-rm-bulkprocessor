@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Box, Typography, AppBar, Toolbar, Button } from '@material-ui/core';
 import ProcessDetails from './ProcessDetails'
 import ChooseProcess from './ChooseProcess'
+import UserIdentity from './UserIdentity'
 
 class App extends Component {
   state = {
@@ -45,6 +46,7 @@ class App extends Component {
         }
         {processDetails}
         {!processDetails && chooseProcess}
+        <UserIdentity></UserIdentity>
       </Box>
     )
   }

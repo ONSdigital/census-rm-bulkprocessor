@@ -15,6 +15,7 @@ import uk.gov.ons.census.bulkprocessor.validation.ColumnValidator;
 
 @Component
 public class RowChunkProcessor {
+
   private final JobRowRepository jobRowRepository;
   private final RabbitTemplate rabbitTemplate;
 
@@ -28,7 +29,7 @@ public class RowChunkProcessor {
     boolean hadErrors = false;
 
     List<JobRow> jobRows =
-        jobRowRepository.findTop10ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED);
+        jobRowRepository.findTop500ByJobAndAndJobRowStatus(job, JobRowStatus.STAGED);
 
     for (JobRow jobRow : jobRows) {
       JobRowStatus rowStatus = JobRowStatus.PROCESSED_OK;
@@ -52,8 +53,9 @@ public class RowChunkProcessor {
 
       jobRow.setValidationErrorDescriptions(String.join(", ", rowValidationErrors));
       jobRow.setJobRowStatus(rowStatus);
-      jobRowRepository.saveAndFlush(jobRow);
     }
+
+    jobRowRepository.saveAll(jobRows);
 
     return hadErrors;
   }

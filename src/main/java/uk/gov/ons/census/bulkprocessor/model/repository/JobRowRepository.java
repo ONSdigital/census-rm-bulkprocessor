@@ -14,5 +14,5 @@ public interface JobRowRepository extends JpaRepository<JobRow, UUID> {
 
   List<JobRow> findByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 
-  List<JobRow> findTop10ByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
+  List<JobRow> findTop500ByJobAndAndJobRowStatus(Job job, JobRowStatus jobRowStatus);
 }

@@ -22,6 +22,8 @@ spring:
       hibernate:
         default_schema: bulkprocessor
         jdbc:
+          batch_size: 500
+          order_inserts: true
           lob:
             non_contextual_creation: true
 
@@ -31,6 +33,11 @@ spring:
     host: localhost
     port: 6672
     virtualhost: /
+
+  task:
+    scheduling:
+      pool:
+        size: 10
 
 management:
   endpoints:
@@ -58,3 +65,5 @@ caseapi:
     scheme: http
     host: localhost
     port: 8161
+
+iapaudience: DUMMY
