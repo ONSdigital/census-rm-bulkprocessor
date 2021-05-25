@@ -44,10 +44,10 @@ spec:
               readOnly: true
           resources:
             requests:
-              cpu: "500m"
+              cpu: "1000m"
               memory: "512Mi"
             limits:
-              cpu: "500m"
+              cpu: "1000m"
               memory: "512Mi"
           imagePullPolicy: IfNotPresent
           readinessProbe:
@@ -112,3 +112,7 @@ spec:
               value: "rm-rabbitmq"
             - name: SPRING_RABBITMQ_PORT
               value: "5672"
+            - name: CASEAPI_CONNECTION_HOST
+              value: "case-api"
+            - name: CASEAPI_CONNECTION_PORT
+              value: "80"
