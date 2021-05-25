@@ -135,7 +135,7 @@ class ProcessDetails extends Component {
             Please upload a {this.props.bulkProcess['title']} bulk file for processing
             </Typography>
           <input
-            accept="csv/*"
+            accept=".csv"
             style={{ display: 'none' }}
             id="contained-button-file"
             type="file"
