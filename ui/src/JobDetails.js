@@ -74,7 +74,7 @@ class JobDetails extends Component {
     }
 
     var fileDownloadHost = ""
-    if (process.env.NODE_ENV != 'production') {
+    if (process.env.NODE_ENV !== 'production') {
       fileDownloadHost = "http://localhost:8080"
     }
 
