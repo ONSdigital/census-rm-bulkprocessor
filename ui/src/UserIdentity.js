@@ -13,7 +13,7 @@ class UserIdentity extends Component {
   getUser = async () => {
     const response = await fetch('whoami')
     const json = await response.json()
-    this.setState({user: json.user})
+    this.setState({ user: json.user })
   }
 
   render() {

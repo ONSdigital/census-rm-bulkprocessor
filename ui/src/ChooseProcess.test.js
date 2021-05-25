@@ -19,7 +19,7 @@ afterEach(() => {
 });
 
 it("renders buttons", async () => {
-  const fakeProcesses = [{"bulkProcess":"NEW_ADDRESS","title":"New Address"},{"bulkProcess":"REFUSAL","title":"Refusal"}];
+  const fakeProcesses = [{ "bulkProcess": "NEW_ADDRESS", "title": "New Address" }, { "bulkProcess": "REFUSAL", "title": "Refusal" }];
   jest.spyOn(global, "fetch").mockImplementation(() =>
     Promise.resolve({
       json: () => Promise.resolve(fakeProcesses)
@@ -28,7 +28,7 @@ it("renders buttons", async () => {
 
   // Use the asynchronous version of act to apply resolved promises
   await act(async () => {
-    render(<ChooseProcess/>, container);
+    render(<ChooseProcess />, container);
   });
 
   const newAddressButton = screen.getByText(/New Address/i);

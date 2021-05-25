@@ -66,7 +66,7 @@ class JobDetails extends Component {
           }
           <Grid container item xs={12} spacing={3}>
             <Typography variant="inherit" color="inherit" style={{ margin: 10, padding: 10 }}>
-              Uploaded Date/Time: {this.props.job.createdAt}
+              Uploaded at: {this.props.job.createdAt}
             </Typography>
           </Grid>
         </Grid>
