@@ -27,3 +27,75 @@ services:
     volumes:
       - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./definitions.json:/opt/definitions.json
+
+  case-processor:
+    container_name: case-processor-bulkprocessor-it
+    image: eu.gcr.io/census-rm-ci/rm/census-rm-case-processor
+    external_links:
+      - postgres-bulkprocessor-it
+      - rabbitmq-bulkprocessor-it
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-bulkprocessor-it:5432/postgres?sslmode=disable
+      - SPRING_RABBITMQ_HOST=rabbitmq-bulkprocessor-it
+      - SPRING_RABBITMQ_PORT=5672
+      - QUEUECONFIG_UAC_QID_CREATED_QUEUE=dummy.uac-qid-created
+      - JAVA_OPTS=-Xmx128m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5121 -Dspring.profiles.active=dev
+      - CASEREFGENERATORKEY=6+VLkvz5XYkF7vFLVX7FDnfxavQ7M+iY
+      - SPRING_CLOUD_GCP_PUBSUB_EMULATOR_HOST=localhost:18538
+      - SPRING_CLOUD_GCP_PUBSUB_PROJECT_ID=aims-new-address-project
+    healthcheck:
+      test: ["CMD", "cat", "/tmp/case-service-healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+    depends_on:
+      postgres-database:
+        condition: service_healthy
+
+  uac-qid:
+    container_name: uac-qid-bulkprocessor-it
+    image: eu.gcr.io/census-rm-ci/rm/census-rm-uac-qid-service
+    ports:
+      - "18164:8164"
+    external_links:
+      - postgres-bulkprocessor-it
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-bulkprocessor-it:5432/postgres?sslmode=disable
+      - SPRING_PROFILES_ACTIVE=dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8164/actuator/info"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+
+  caseapi:
+    container_name: caseapi-bulkprocessor-it
+    image: eu.gcr.io/census-rm-ci/rm/census-rm-case-api
+    ports:
+      - "18161:8161"
+    external_links:
+      - postgres-case-api-it
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-bulkprocessor-it:5432/postgres?sslmode=disable
+      - SPRING_RABBITMQ_HOST=rabbitmq-bulkprocessor-it
+      - SPRING_RABBITMQ_PORT=5672
+      - QUEUECONFIG_UAC_QID_CREATED_QUEUE=dummy.uac-qid-created
+      - UACSERVICE_CONNECTION_HOST=uac-qid-case-api-it
+      - UACSERVICE_CONNECTION_PORT=18164
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8161/actuator/info"]
+      interval: 60s
+      timeout: 10s
+      retries: 4
+
+
+
+  start_dependencies:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+      case-processor:
+        condition: service_healthy
+      uac-qid:
+        condition: service_healthy
