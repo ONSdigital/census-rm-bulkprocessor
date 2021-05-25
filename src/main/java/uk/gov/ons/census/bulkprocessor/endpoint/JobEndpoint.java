@@ -4,7 +4,6 @@ import com.opencsv.CSVWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
@@ -44,33 +43,41 @@ public class JobEndpoint {
   }
 
   @GetMapping
-  public List<JobDto> findAllJobs(
-      @RequestParam(value = "bulkProcess", required = false) Optional<BulkProcess> bulkProcess,
+  public List<JobDto> findBulkProcessJobs(
+      @RequestParam(value = "bulkProcess") BulkProcess bulkProcess,
       @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
-    if (bulkProcess.isPresent()) {
-      if (!userIdentity.getBulkProcesses(jwtToken).contains(bulkProcess.get())) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
-      }
-
-      return jobRepository.findByBulkProcess(bulkProcess.get()).stream()
-          .map((job) -> mapJob(job))
-          .collect(Collectors.toList());
-    } else {
-      return jobRepository.findAll().stream()
-          .map((job) -> mapJob(job))
-          .collect(Collectors.toList());
+    if (!userIdentity.getBulkProcesses(jwtToken).contains(bulkProcess)) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
     }
+
+    return jobRepository.findByBulkProcessOrderByCreatedAtDesc(bulkProcess).stream()
+        .map(this::mapJob)
+        .collect(Collectors.toList());
   }
 
   @GetMapping(value = "/{id}")
-  public JobDto findJob(@PathVariable("id") UUID id) {
+  public JobDto findJob(
+      @PathVariable("id") UUID id,
+      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken) {
+    Job job = jobRepository.findById(id).get();
+    if (!userIdentity.getBulkProcesses(jwtToken).contains(job.getBulkProcess())) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
+    }
+
     return mapJob(jobRepository.findById(id).get());
   }
 
   @GetMapping(value = "/{id}/error")
   @ResponseBody
-  public String getErrorCsv(@PathVariable("id") UUID id, HttpServletResponse response) {
+  public String getErrorCsv(
+      @PathVariable("id") UUID id,
+      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken,
+      HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
+    if (!userIdentity.getBulkProcesses(jwtToken).contains(job.getBulkProcess())) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
+    }
+
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_ERROR);
 
@@ -102,8 +109,15 @@ public class JobEndpoint {
 
   @GetMapping(value = "/{id}/errorDetail")
   @ResponseBody
-  public String getErrorDetailCsv(@PathVariable("id") UUID id, HttpServletResponse response) {
+  public String getErrorDetailCsv(
+      @PathVariable("id") UUID id,
+      @RequestHeader(required = false, value = "x-goog-iap-jwt-assertion") String jwtToken,
+      HttpServletResponse response) {
     Job job = jobRepository.findById(id).get();
+    if (!userIdentity.getBulkProcesses(jwtToken).contains(job.getBulkProcess())) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorised");
+    }
+
     List<JobRow> jobRows =
         jobRowRepository.findByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_ERROR);
 

@@ -8,7 +8,7 @@ import uk.gov.ons.census.bulkprocessor.model.entity.Job;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobStatus;
 
 public interface JobRepository extends JpaRepository<Job, UUID> {
-  List<Job> findByBulkProcess(BulkProcess bulkProcess);
+  List<Job> findByBulkProcessOrderByCreatedAtDesc(BulkProcess bulkProcess);
 
   List<Job> findByJobStatus(JobStatus jobStatus);
 }

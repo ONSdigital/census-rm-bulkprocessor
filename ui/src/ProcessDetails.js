@@ -97,8 +97,8 @@ class ProcessDetails extends Component {
     clearInterval(this.interval)
   }
 
-  handleOpenDetails = (index) => {
-    this.setState({ showDetails: true, selectedJob: index })
+  handleOpenDetails = (job) => {
+    this.setState({ showDetails: true, selectedJob: job.id })
   }
 
   handleClosedDetails = () => {
@@ -106,6 +106,8 @@ class ProcessDetails extends Component {
   }
 
   render() {
+    const selectedJob = this.state.jobs.find(job => job.id === this.state.selectedJob)
+
     const jobTableRows = this.state.jobs.map((job, index) => (
       <TableRow key={job.createdAt}>
         <TableCell component="th" scope="row">
@@ -114,7 +116,7 @@ class ProcessDetails extends Component {
         <TableCell>{job.createdAt}</TableCell>
         <TableCell align="right">
           <Button
-            onClick={() => this.handleOpenDetails(index)}
+            onClick={() => this.handleOpenDetails(job)}
             variant="contained">
             {job.jobStatus} {!job.jobStatus.startsWith('PROCESSED') && <CircularProgress size={15} style={{ marginLeft: 10 }} />}
           </Button>
@@ -183,7 +185,7 @@ class ProcessDetails extends Component {
             message={'File upload successful!'}
           />
         </Snackbar>
-        <JobDetails jobTitle={this.props.bulkProcess['title']} job={this.state.jobs[this.state.selectedJob]} showDetails={this.state.showDetails} handleClosedDetails={this.handleClosedDetails}>
+        <JobDetails jobTitle={this.props.bulkProcess['title']} job={selectedJob} showDetails={this.state.showDetails} handleClosedDetails={this.handleClosedDetails}>
         </JobDetails>
       </Grid>
     )
