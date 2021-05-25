@@ -185,7 +185,7 @@ class ProcessDetails extends Component {
             message={'File upload successful!'}
           />
         </Snackbar>
-        <JobDetails jobTitle={this.props.bulkProcess['title']} job={selectedJob} showDetails={this.state.showDetails} handleClosedDetails={this.handleClosedDetails}>
+        <JobDetails jobTitle={this.props.bulkProcess['title']} job={selectedJob} showDetails={this.state.showDetails} handleClosedDetails={this.handleClosedDetails} onClickAway={this.handleClosedDetails}>
         </JobDetails>
       </Grid>
     )

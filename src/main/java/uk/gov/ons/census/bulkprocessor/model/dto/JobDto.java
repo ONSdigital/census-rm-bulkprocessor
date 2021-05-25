@@ -11,6 +11,7 @@ public class JobDto {
   private String bulkProcess;
 
   private OffsetDateTime createdAt;
+  private String createdBy;
   private OffsetDateTime lastUpdatedAt;
 
   private String fileName;

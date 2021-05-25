@@ -156,6 +156,7 @@ public class JobEndpoint {
     jobDto.setId(job.getId());
     jobDto.setBulkProcess(job.getBulkProcess().name());
     jobDto.setCreatedAt(job.getCreatedAt());
+    jobDto.setCreatedBy(job.getCreatedBy());
     jobDto.setLastUpdatedAt(job.getLastUpdatedAt());
     jobDto.setFileName(job.getFileName());
     jobDto.setFileRowCount(job.getFileRowCount());

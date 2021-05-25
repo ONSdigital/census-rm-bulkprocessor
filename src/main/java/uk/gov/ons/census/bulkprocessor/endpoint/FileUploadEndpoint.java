@@ -51,6 +51,7 @@ public class FileUploadEndpoint {
       job.setFileName(file.getOriginalFilename());
       job.setFileId(fileId);
       job.setJobStatus(JobStatus.FILE_UPLOADED);
+      job.setCreatedBy(userIdentity.getUserEmail(jwtToken));
 
       int rowCount = 0;
       while (reader.ready()) {
