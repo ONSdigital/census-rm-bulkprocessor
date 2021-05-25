@@ -121,8 +121,6 @@ public class JobEndPointIT {
 
         try (QueueSpy outtyQueue = rabbitQueueHelper.listen(outputQueue)) {
             HttpEntity<MultiValueMap<String, Object>> entityToSend = buildEntityForRefusal(emittedCase.getId());
-
-
             ResponseEntity<String> response = restTemplate.postForEntity(fileUploadUrl, entityToSend, String.class);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -151,8 +149,7 @@ public class JobEndPointIT {
         String fileData = "case_id,refusal_type\n" + caseId + ",EXTRAORDINARY_REFUSAL";
         Path tempFile = Files.createTempFile(null, null);
         System.out.println(tempFile);
-
-        // write a line
+        
         Files.write(tempFile, fileData.getBytes(StandardCharsets.UTF_8));
         FileSystemResource fileSystemResource = new FileSystemResource(tempFile);
 
