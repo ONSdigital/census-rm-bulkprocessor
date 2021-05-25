@@ -79,7 +79,8 @@ public class JobEndpoint {
     }
 
     List<JobRow> jobRows =
-        jobRowRepository.findByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_ERROR);
+        jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
+            job, JobRowStatus.PROCESSED_ERROR);
 
     String csvFileName = "ERROR_" + job.getFileName();
 
@@ -119,7 +120,8 @@ public class JobEndpoint {
     }
 
     List<JobRow> jobRows =
-        jobRowRepository.findByJobAndAndJobRowStatus(job, JobRowStatus.PROCESSED_ERROR);
+        jobRowRepository.findByJobAndAndJobRowStatusOrderByOriginalRowLineNumber(
+            job, JobRowStatus.PROCESSED_ERROR);
 
     String csvFileName = "ERROR_DETAIL_" + job.getFileName();
 
