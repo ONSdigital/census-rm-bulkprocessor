@@ -9,6 +9,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import JobDetails from './JobDetails';
+import { convertStatusText } from './common'
 
 class ProcessDetails extends Component {
   constructor(props) {
@@ -66,7 +67,7 @@ class ProcessDetails extends Component {
         })
       }
 
-    }).then(data => {      
+    }).then(data => {
       // Hide the progress dialog and flash the snackbar message
       this.setState({
         fileProgress: 1.0,
@@ -121,7 +122,7 @@ class ProcessDetails extends Component {
           <Button
             onClick={() => this.handleOpenDetails(job)}
             variant="contained">
-            {job.jobStatus} {!job.jobStatus.startsWith('PROCESSED') && <CircularProgress size={15} style={{ marginLeft: 10 }} />}
+            {convertStatusText(job.jobStatus)} {!job.jobStatus.startsWith('PROCESSED') && <CircularProgress size={15} style={{ marginLeft: 10 }} />}
           </Button>
         </TableCell>
       </TableRow>
