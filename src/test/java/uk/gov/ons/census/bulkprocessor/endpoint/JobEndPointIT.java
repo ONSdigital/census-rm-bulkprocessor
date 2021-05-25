@@ -64,7 +64,6 @@ public class JobEndPointIT {
     private int port;
 
     @Before
-//    @Transactional
     public void setUp() {
         fileUploadUrl = "http://localhost:" + port + "/upload/";
         rabbitQueueHelper.purgeQueue(outputQueue);
@@ -116,9 +115,6 @@ public class JobEndPointIT {
             assertThat(job.getJobStatus()).isEqualTo(JobStatusDto.PROCESSED_OK);
         }
 
-        //Clear this down before next one
-        rabbitQueueHelper.purgeQueue(outputQueue);
-
         try (QueueSpy outtyQueue = rabbitQueueHelper.listen(outputQueue)) {
             HttpEntity<MultiValueMap<String, Object>> entityToSend = buildEntityForRefusal(emittedCase.getId());
             ResponseEntity<String> response = restTemplate.postForEntity(fileUploadUrl, entityToSend, String.class);
@@ -149,7 +145,7 @@ public class JobEndPointIT {
         String fileData = "case_id,refusal_type\n" + caseId + ",EXTRAORDINARY_REFUSAL";
         Path tempFile = Files.createTempFile(null, null);
         System.out.println(tempFile);
-        
+
         Files.write(tempFile, fileData.getBytes(StandardCharsets.UTF_8));
         FileSystemResource fileSystemResource = new FileSystemResource(tempFile);
 
