@@ -15,11 +15,14 @@ import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.census.bulkprocessor.model.dto.JobDto;
 import uk.gov.ons.census.bulkprocessor.model.entity.BulkProcess;
 import uk.gov.ons.census.bulkprocessor.model.entity.Job;
+import uk.gov.ons.census.bulkprocessor.model.entity.JobRow;
+import uk.gov.ons.census.bulkprocessor.model.entity.JobRowStatus;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobStatus;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRepository;
+import uk.gov.ons.census.bulkprocessor.model.repository.JobRowRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,14 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JobEndPointIT {
-    private static final String NEW_ADDRESS_FILE = "new_addresses.csv";
-    private static final String TEST_FILES_DIR = "test_files/";
-
     @Autowired
     JobRepository jobRepository;
-//
-//    @Autowired
-//    JobRowRepository jobRowRepository;
+
+    @Autowired
+    JobRowRepository jobRowRepository;
 
     String jobUrl = "";
 
@@ -80,5 +80,68 @@ public class JobEndPointIT {
         ResponseEntity<JobDto> actualJobResponse = restTemplate.getForEntity(jobUrl + "/" + job.getId().toString(), JobDto.class);
         assertThat(actualJobResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(actualJobResponse.getBody().getId()).isEqualTo(job.getId());
+    }
+
+    @Test
+    public void getErrorDetails() {
+        Job job = new Job();
+        job.setId(UUID.randomUUID());
+        jobRepository.saveAndFlush(job);
+
+        JobRow jobRow1 = new JobRow();
+        jobRow1.setId(UUID.randomUUID());
+        jobRow1.setJob(job);
+        jobRow1.setJobRowStatus(JobRowStatus.PROCESSED_ERROR);
+        jobRow1.setOriginalRowLineNumber(11);
+        jobRow1.setValidationErrorDescriptions("Bad Speling");
+        Map<String, String> jobRowData = new HashMap<>();
+        jobRowData.put("key1", "bad data 1");
+
+        jobRowRepository.saveAndFlush(jobRow1);
+
+        JobRow jobRow2 = new JobRow();
+        jobRow2.setId(UUID.randomUUID());
+        jobRow2.setJob(job);
+        jobRow2.setJobRowStatus(JobRowStatus.PROCESSED_ERROR);
+        jobRow2.setOriginalRowLineNumber(111);
+        jobRow2.setValidationErrorDescriptions("Grammar bad");
+        Map<String, String> jobRowData2 = new HashMap<>();
+        jobRowData2.put("key2", "bad data 2");
+        jobRowRepository.saveAndFlush(jobRow2);
+
+        ResponseEntity<String> errorStringResponse = restTemplate.getForEntity(jobUrl + "/" + job.getId().toString() + "/errorDetail", String.class);
+        assertThat(errorStringResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(errorStringResponse.getBody()).isEqualTo("\"ORIGINAL ROW NUMBER\",\"ERRORS\"\n\"11\",\"Bad Speling\"\n\"111\",\"Grammar bad\"\n");
+    }
+
+    @Test
+    public void getErrors() {
+        Job job = new Job();
+        job.setId(UUID.randomUUID());
+        job.setBulkProcess(BulkProcess.REFUSAL);
+        jobRepository.saveAndFlush(job);
+
+        JobRow jobRow1 = new JobRow();
+        jobRow1.setId(UUID.randomUUID());
+        jobRow1.setJob(job);
+        jobRow1.setJobRowStatus(JobRowStatus.PROCESSED_ERROR);
+        UUID jobRow1Id = UUID.randomUUID();
+        jobRow1.setOriginalRowData(new String[]{jobRow1Id.toString(), "DIDN'T FANCY IT"});
+        jobRowRepository.saveAndFlush(jobRow1);
+
+        JobRow jobRow2 = new JobRow();
+        jobRow2.setId(UUID.randomUUID());
+        jobRow2.setJob(job);
+        jobRow2.setJobRowStatus(JobRowStatus.PROCESSED_ERROR);
+        UUID jobRow2Id = UUID.randomUUID();
+        jobRow2.setOriginalRowData(new String[]{jobRow2Id.toString(), "HAD TO WASH HAIR INSTEAD"});
+        jobRowRepository.saveAndFlush(jobRow2);
+
+        ResponseEntity<String> errorStringResponse = restTemplate.getForEntity(jobUrl + "/" + job.getId().toString() + "/error", String.class);
+
+        assertThat(errorStringResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(errorStringResponse.getBody()).isEqualTo("\"case_id\",\"refusal_type\"\n"
+                + "\"" + jobRow1Id.toString() + "\",\"DIDN'T FANCY IT\"\n"
+                + "\"" + jobRow2Id.toString() + "\",\"HAD TO WASH HAIR INSTEAD\"\n");
     }
 }
