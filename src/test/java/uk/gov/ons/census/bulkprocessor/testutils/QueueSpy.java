@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import uk.gov.ons.census.bulkprocessor.models.test_dtos.ResponseManagementEvent;
+import uk.gov.ons.census.bulkprocessor.model.dto.TestResponseManagementEvent;
 
 @AllArgsConstructor
 public class QueueSpy implements AutoCloseable {
@@ -23,12 +23,12 @@ public class QueueSpy implements AutoCloseable {
     container.stop();
   }
 
-  public ResponseManagementEvent checkExpectedMessageReceived()
+  public TestResponseManagementEvent checkExpectedMessageReceived()
       throws IOException, InterruptedException {
     String actualMessage = queue.poll(20, TimeUnit.SECONDS);
     assertNotNull("Did not receive message before timeout", actualMessage);
-    ResponseManagementEvent responseManagementEvent =
-        objectMapper.readValue(actualMessage, ResponseManagementEvent.class);
+    TestResponseManagementEvent responseManagementEvent =
+        objectMapper.readValue(actualMessage, TestResponseManagementEvent.class);
     assertNotNull(responseManagementEvent);
     return responseManagementEvent;
   }

@@ -1,9 +1,9 @@
-package uk.gov.ons.census.bulkprocessor.models.test_dtos;
+package uk.gov.ons.census.bulkprocessor.model.dto;
 
 import lombok.Data;
 
 @Data
-public class Address {
+public class TestAddress {
   private String addressLine1;
   private String addressLine2;
   private String addressLine3;

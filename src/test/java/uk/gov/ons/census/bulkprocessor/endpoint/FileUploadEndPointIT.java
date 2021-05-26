@@ -29,11 +29,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.census.bulkprocessor.model.dto.JobDto;
 import uk.gov.ons.census.bulkprocessor.model.dto.JobStatusDto;
+import uk.gov.ons.census.bulkprocessor.model.dto.TestCollectionCase;
+import uk.gov.ons.census.bulkprocessor.model.dto.TestResponseManagementEvent;
 import uk.gov.ons.census.bulkprocessor.model.entity.BulkProcess;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRepository;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRowRepository;
-import uk.gov.ons.census.bulkprocessor.models.test_dtos.CollectionCase;
-import uk.gov.ons.census.bulkprocessor.models.test_dtos.ResponseManagementEvent;
 import uk.gov.ons.census.bulkprocessor.testutils.QueueSpy;
 import uk.gov.ons.census.bulkprocessor.testutils.RabbitQueueHelper;
 
@@ -75,7 +75,7 @@ public class FileUploadEndPointIT {
           restTemplate.postForEntity(fileUploadUrl, requestEntity, String.class);
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-      ResponseManagementEvent emittedCase = outputQueueSpy.checkExpectedMessageReceived();
+      TestResponseManagementEvent emittedCase = outputQueueSpy.checkExpectedMessageReceived();
       assertThat(emittedCase.getPayload().getCollectionCase().getAddress().getUprn())
           .isEqualTo("6034022");
       assertThat(emittedCase.getPayload().getCollectionCase().getAddress().getOrganisationName())
@@ -93,7 +93,7 @@ public class FileUploadEndPointIT {
 
   @Test
   public void testUploadARefusalFile() throws InterruptedException, Exception {
-    CollectionCase emittedCase;
+    TestCollectionCase emittedCase;
 
     // 1st load a New Address to get a case to refuse
     try (QueueSpy outputQueueSpy = rabbitQueueHelper.listen(outputQueue)) {
@@ -118,7 +118,7 @@ public class FileUploadEndPointIT {
           restTemplate.postForEntity(fileUploadUrl, entityToSend, String.class);
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-      CollectionCase refusalEmittedCaseUpdate =
+      TestCollectionCase refusalEmittedCaseUpdate =
           outtyQueue.checkExpectedMessageReceived().getPayload().getCollectionCase();
       assertThat(refusalEmittedCaseUpdate.getId()).isEqualTo(emittedCase.getId());
 

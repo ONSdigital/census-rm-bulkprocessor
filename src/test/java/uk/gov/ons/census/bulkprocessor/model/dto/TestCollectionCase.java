@@ -1,15 +1,14 @@
-package uk.gov.ons.census.bulkprocessor.models.test_dtos;
+package uk.gov.ons.census.bulkprocessor.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.UUID;
 import lombok.Data;
-import uk.gov.ons.census.bulkprocessor.model.dto.RefusalTypeDTO;
 
 @Data
 @JsonInclude(Include.NON_NULL)
-public class CollectionCase {
+public class TestCollectionCase {
   private UUID id;
-  private Address address;
+  private TestAddress address;
   private RefusalTypeDTO refusalReceived;
 }
