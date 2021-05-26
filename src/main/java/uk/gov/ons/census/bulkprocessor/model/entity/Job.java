@@ -27,6 +27,8 @@ public class Job {
   @CreationTimestamp
   private OffsetDateTime createdAt;
 
+  @Column private String createdBy;
+
   @Column(columnDefinition = "timestamp with time zone")
   @UpdateTimestamp
   private OffsetDateTime lastUpdatedAt;

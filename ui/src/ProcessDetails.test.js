@@ -55,7 +55,7 @@ it('renders details popup dialog when clicked', async () => {
     render(<ProcessDetails bulkProcess={{ "bulkProcess": "NEW_ADDRESS", "title": "New Address" }} />, container);
   });
 
-  const button = screen.getByText(/PROCESSED_OK/i);
+  const button = screen.getByText(/Processed OK/i);
 
   // Test second render and componentDidUpdate
   act(() => {

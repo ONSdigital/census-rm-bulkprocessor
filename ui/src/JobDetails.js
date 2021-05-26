@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '@fontsource/roboto';
 import { Typography, Grid, Button, Dialog, DialogContent, LinearProgress } from '@material-ui/core';
-
+import { convertStatusText } from './common'
 
 class JobDetails extends Component {
   render() {
@@ -27,7 +27,7 @@ class JobDetails extends Component {
           </Grid>
           <Grid container item xs={12} spacing={3}>
             <Typography variant="inherit" color="inherit" style={{ margin: 10, padding: 10 }}>
-              Job status: {this.props.job.jobStatus}
+              Job status: {convertStatusText(this.props.job.jobStatus)}
             </Typography>
           </Grid>
           <Grid container item xs={12} spacing={3}>
@@ -69,6 +69,11 @@ class JobDetails extends Component {
               Uploaded at: {this.props.job.createdAt}
             </Typography>
           </Grid>
+          <Grid container item xs={12} spacing={3}>
+            <Typography variant="inherit" color="inherit" style={{ margin: 10, padding: 10 }}>
+              Uploaded by: {this.props.job.createdBy}
+            </Typography>
+          </Grid>
         </Grid>
       )
     }
@@ -94,7 +99,7 @@ class JobDetails extends Component {
 
     return (
 
-      <Dialog open={this.props.showDetails}>
+      <Dialog open={this.props.showDetails} onClose={this.props.onClickAway}>
         <DialogContent style={{ padding: 30 }}>
           <Grid container spacing={1}>
             {jobDetailsFragment}

@@ -9,6 +9,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import JobDetails from './JobDetails';
+import { convertStatusText } from './common'
 
 class ProcessDetails extends Component {
   constructor(props) {
@@ -45,6 +46,9 @@ class ProcessDetails extends Component {
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
     formData.append("bulkProcess", this.props.bulkProcess['bulkProcess'])
+
+    // Reset the file
+    e.target.value = null;
 
     // Send the file data to the backend
     axios.request({
@@ -97,8 +101,8 @@ class ProcessDetails extends Component {
     clearInterval(this.interval)
   }
 
-  handleOpenDetails = (index) => {
-    this.setState({ showDetails: true, selectedJob: index })
+  handleOpenDetails = (job) => {
+    this.setState({ showDetails: true, selectedJob: job.id })
   }
 
   handleClosedDetails = () => {
@@ -106,6 +110,8 @@ class ProcessDetails extends Component {
   }
 
   render() {
+    const selectedJob = this.state.jobs.find(job => job.id === this.state.selectedJob)
+
     const jobTableRows = this.state.jobs.map((job, index) => (
       <TableRow key={job.createdAt}>
         <TableCell component="th" scope="row">
@@ -114,9 +120,9 @@ class ProcessDetails extends Component {
         <TableCell>{job.createdAt}</TableCell>
         <TableCell align="right">
           <Button
-            onClick={() => this.handleOpenDetails(index)}
+            onClick={() => this.handleOpenDetails(job)}
             variant="contained">
-            {job.jobStatus} {!job.jobStatus.startsWith('PROCESSED') && <CircularProgress size={15} style={{ marginLeft: 10 }} />}
+            {convertStatusText(job.jobStatus)} {!job.jobStatus.startsWith('PROCESSED') && <CircularProgress size={15} style={{ marginLeft: 10 }} />}
           </Button>
         </TableCell>
       </TableRow>
@@ -129,7 +135,7 @@ class ProcessDetails extends Component {
             Please upload a {this.props.bulkProcess['title']} bulk file for processing
             </Typography>
           <input
-            accept="csv/*"
+            accept=".csv"
             style={{ display: 'none' }}
             id="contained-button-file"
             type="file"
@@ -183,7 +189,7 @@ class ProcessDetails extends Component {
             message={'File upload successful!'}
           />
         </Snackbar>
-        <JobDetails jobTitle={this.props.bulkProcess['title']} job={this.state.jobs[this.state.selectedJob]} showDetails={this.state.showDetails} handleClosedDetails={this.handleClosedDetails}>
+        <JobDetails jobTitle={this.props.bulkProcess['title']} job={selectedJob} showDetails={this.state.showDetails} handleClosedDetails={this.handleClosedDetails} onClickAway={this.handleClosedDetails}>
         </JobDetails>
       </Grid>
     )
