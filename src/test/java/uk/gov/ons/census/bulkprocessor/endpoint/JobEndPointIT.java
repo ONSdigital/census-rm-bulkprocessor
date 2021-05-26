@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.census.bulkprocessor.model.dto.JobDto;
+import uk.gov.ons.census.bulkprocessor.model.dto.JobStatusDto;
 import uk.gov.ons.census.bulkprocessor.model.entity.BulkProcess;
 import uk.gov.ons.census.bulkprocessor.model.entity.Job;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobRow;
@@ -21,6 +22,7 @@ import uk.gov.ons.census.bulkprocessor.model.entity.JobStatus;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRepository;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRowRepository;
 
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -62,24 +64,38 @@ public class JobEndPointIT {
             jobRepository.saveAndFlush(job);
         }
 
-        ResponseEntity<JobDto[]> actualJobsResponse = restTemplate.getForEntity(jobUrl, JobDto[].class);
+        String url = jobUrl + "?bulkProcess=" + BulkProcess.REFUSAL.toString();
+        ResponseEntity<JobDto[]> actualJobsResponse = restTemplate.getForEntity(url, JobDto[].class);
         assertThat(actualJobsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         JobDto[] actualJobs = actualJobsResponse.getBody();
         assertThat(actualJobs.length).isEqualTo(10);
     }
 
     @Test
-    public void testGetJobById() {
+    public void testGetJobByIdAndCheckFieldsPopulatedCorrectly() {
         Job job = new Job();
         job.setId(UUID.randomUUID());
         job.setBulkProcess(BulkProcess.REFUSAL);
         job.setJobStatus(JobStatus.PROCESSED_OK);
 
+        job.setCreatedAt(OffsetDateTime.now().minusDays(1));
+        job.setCreatedBy("NDD");
+        job.setLastUpdatedAt(OffsetDateTime.now());
+        job.setFileName("A_refusal_file.csv");
+        job.setFileRowCount(137);
+
         jobRepository.saveAndFlush(job);
 
         ResponseEntity<JobDto> actualJobResponse = restTemplate.getForEntity(jobUrl + "/" + job.getId().toString(), JobDto.class);
         assertThat(actualJobResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(actualJobResponse.getBody().getId()).isEqualTo(job.getId());
+        JobDto actualJob = actualJobResponse.getBody();
+        assertThat(actualJob.getId()).isEqualTo(job.getId());
+        assertThat(actualJob.getJobStatus().toString()).isEqualTo(job.getJobStatus().toString());
+        assertThat(actualJob.getCreatedAt()).isEqualTo(job.getCreatedAt());
+        assertThat(actualJob.getCreatedBy()).isEqualTo("NDD");
+        assertThat(actualJob.getLastUpdatedAt()).isEqualTo(job.getLastUpdatedAt());
+        assertThat(actualJob.getFileName()).isEqualTo("A_refusal_file.csv");
+        assertThat(actualJob.getFileRowCount()).isEqualTo(137);
     }
 
     @Test
