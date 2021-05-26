@@ -23,7 +23,7 @@ public class BulkProcessEndpointIT {
 
   @LocalServerPort private int port;
 
-  String bulkProcessorUrl = "";
+  private String bulkProcessorUrl = "";
 
   @Before
   public void setUp() {

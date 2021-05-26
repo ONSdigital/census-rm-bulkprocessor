@@ -52,9 +52,9 @@ public class FileUploadEndPointIT {
   @Autowired private RabbitQueueHelper rabbitQueueHelper;
 
   private String outputQueue = "case.rh.case";
-  String fileUploadUrl = "";
+  private String fileUploadUrl = "";
 
-  RestTemplate restTemplate = new RestTemplate();
+  private RestTemplate restTemplate = new RestTemplate();
 
   @LocalServerPort private int port;
 
@@ -66,7 +66,7 @@ public class FileUploadEndPointIT {
   }
 
   @Test
-  public void UploadANewAddressFile() throws Exception {
+  public void testUploadANewAddressFile() throws Exception {
 
     try (QueueSpy outputQueueSpy = rabbitQueueHelper.listen(outputQueue)) {
       HttpEntity<MultiValueMap<String, Object>> requestEntity =
@@ -92,7 +92,7 @@ public class FileUploadEndPointIT {
   }
 
   @Test
-  public void UploadARefusalFile() throws InterruptedException, Exception {
+  public void testUploadARefusalFile() throws InterruptedException, Exception {
     CollectionCase emittedCase;
 
     // 1st load a New Address to get a case to refuse

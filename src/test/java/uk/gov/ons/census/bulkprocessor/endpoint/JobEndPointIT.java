@@ -36,9 +36,9 @@ public class JobEndPointIT {
 
   @Autowired JobRowRepository jobRowRepository;
 
-  String jobUrl = "";
+  private String jobUrl = "";
 
-  RestTemplate restTemplate = new RestTemplate();
+  private RestTemplate restTemplate = new RestTemplate();
 
   @LocalServerPort private int port;
 
@@ -49,7 +49,7 @@ public class JobEndPointIT {
   }
 
   @Test
-  public void findAllJobsIT() {
+  public void testFindAllJobs() {
     for (int i = 0; i < 10; i++) {
       Job job = new Job();
       job.setId(UUID.randomUUID());
@@ -92,7 +92,7 @@ public class JobEndPointIT {
   }
 
   @Test
-  public void getErrorDetails() {
+  public void testGetErrorDetails() {
     Job job = new Job();
     job.setId(UUID.randomUUID());
     job.setBulkProcess(NEW_ADDRESS);
@@ -129,7 +129,7 @@ public class JobEndPointIT {
   }
 
   @Test
-  public void getErrors() {
+  public void testGetErrors() {
     Job job = new Job();
     job.setId(UUID.randomUUID());
     job.setBulkProcess(BulkProcess.REFUSAL);
