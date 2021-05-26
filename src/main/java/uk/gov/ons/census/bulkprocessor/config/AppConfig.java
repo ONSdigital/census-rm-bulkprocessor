@@ -1,5 +1,7 @@
 package uk.gov.ons.census.bulkprocessor.config;
 
+import java.util.TimeZone;
+import javax.annotation.PostConstruct;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -23,5 +25,10 @@ public class AppConfig {
   @Bean
   public Jackson2JsonMessageConverter messageConverter() {
     return new Jackson2JsonMessageConverter(ObjectMapperFactory.objectMapper());
+  }
+
+  @PostConstruct
+  public void init() {
+    TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
   }
 }

@@ -1,5 +1,7 @@
 package uk.gov.ons.census.bulkprocessor.testutils;
 
+import static org.junit.Assert.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -8,9 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import uk.gov.ons.census.bulkprocessor.models.test_dtos.ResponseManagementEvent;
-
-
-import static org.junit.Assert.*;
 
 @AllArgsConstructor
 public class QueueSpy implements AutoCloseable {
@@ -25,11 +24,11 @@ public class QueueSpy implements AutoCloseable {
   }
 
   public ResponseManagementEvent checkExpectedMessageReceived()
-          throws IOException, InterruptedException {
+      throws IOException, InterruptedException {
     String actualMessage = queue.poll(20, TimeUnit.SECONDS);
     assertNotNull("Did not receive message before timeout", actualMessage);
     ResponseManagementEvent responseManagementEvent =
-            objectMapper.readValue(actualMessage, ResponseManagementEvent.class);
+        objectMapper.readValue(actualMessage, ResponseManagementEvent.class);
     assertNotNull(responseManagementEvent);
     return responseManagementEvent;
   }
