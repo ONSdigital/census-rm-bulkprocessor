@@ -1,9 +1,11 @@
 package uk.gov.ons.census.bulkprocessor.schedule;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,17 +13,19 @@ import uk.gov.ons.census.bulkprocessor.model.entity.Job;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobRow;
 import uk.gov.ons.census.bulkprocessor.model.entity.JobRowStatus;
 import uk.gov.ons.census.bulkprocessor.model.repository.JobRowRepository;
+import uk.gov.ons.census.bulkprocessor.utility.ObjectMapperFactory;
 import uk.gov.ons.census.bulkprocessor.validation.ColumnValidator;
 
 @Component
 public class RowChunkProcessor {
+  private static final ObjectMapper objectMapper = ObjectMapperFactory.objectMapper();
 
   private final JobRowRepository jobRowRepository;
-  private final RabbitTemplate rabbitTemplate;
+  private final JmsTemplate jmsTemplate;
 
-  public RowChunkProcessor(JobRowRepository jobRowRepository, RabbitTemplate rabbitTemplate) {
+  public RowChunkProcessor(JobRowRepository jobRowRepository, JmsTemplate jmsTemplate) {
     this.jobRowRepository = jobRowRepository;
-    this.rabbitTemplate = rabbitTemplate;
+    this.jmsTemplate = jmsTemplate;
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -45,10 +49,17 @@ public class RowChunkProcessor {
       }
 
       if (rowValidationErrors.size() == 0) {
-        rabbitTemplate.convertAndSend(
-            job.getBulkProcess().getTargetExchange(),
+        jmsTemplate.send(
             job.getBulkProcess().getTargetRoutingKey(),
-            job.getBulkProcess().getTransformer().transformRow(jobRow.getRowData()));
+            s -> {
+              try {
+                return s.createTextMessage(
+                    objectMapper.writeValueAsString(
+                        job.getBulkProcess().getTransformer().transformRow(jobRow.getRowData())));
+              } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+              }
+            });
       }
 
       jobRow.setValidationErrorDescriptions(String.join(", ", rowValidationErrors));
